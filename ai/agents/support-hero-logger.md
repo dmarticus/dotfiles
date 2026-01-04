@@ -17,7 +17,7 @@ Read all support notes from a given week's directory (e.g., `~/dev/ai/support/20
 
 **Structure per ticket**:
 
-```
+```text
 Customer/Company Name (https://posthoghelp.zendesk.com/agent/tickets/TICKET_NUMBER) - brief issue description. What I found/did. Optional: personal take or impact note. Optional: GitHub PR link. (Status)
 ```
 
@@ -66,7 +66,7 @@ Use these exact formats:
 
 **Input** (from investigation notes):
 
-```
+```markdown
 # Zendesk #40875
 Root cause: Oct 8 commit added UserAccessControlSerializerMixin to surveys
 without bulk optimization. For 59 flags with surveys, causes 59 individual
@@ -76,7 +76,7 @@ engineering handoff with 3 solution approaches.
 
 **Output**:
 
-```
+```text
 Freepik (https://posthoghelp.zendesk.com/agent/tickets/40875) - feature flags list taking 10 seconds to load. Found regression from Oct 8 commit adding survey access controls. Submitted fix. This affects us too! (Pending, To close after deployed)
 ```
 
@@ -138,25 +138,25 @@ Ticket (https://posthoghelp.zendesk.com/agent/tickets/40603) - GeoIP properties 
 
 **If ticket has no resolution yet**:
 
-```
+```text
 Customer (https://posthoghelp.zendesk.com/agent/tickets/12345) - experiencing X issue. Still investigating. (Unresolved, Pending)
 ```
 
 **If you handed off to another team**:
 
-```
+```text
 Customer (https://posthoghelp.zendesk.com/agent/tickets/12345) - Y problem. Handed off to [Team] team. (Pending)
 ```
 
 **If not a bug**:
 
-```
+```text
 Customer (https://posthoghelp.zendesk.com/agent/tickets/12345) - Z behavior. Not a bug - [brief explanation]. Explained to customer. (Pending, should resolve)
 ```
 
 **If you created a PR**:
 
-```
+```text
 Customer (https://posthoghelp.zendesk.com/agent/tickets/12345) - W issue. Found root cause and submitted fix: [PR URL]. (Pending, To close after deployed)
 ```
 
@@ -171,7 +171,7 @@ Customer (https://posthoghelp.zendesk.com/agent/tickets/12345) - W issue. Found 
 
 Always output ONLY the formatted highlights log, nothing else. No preamble, no "here's your log", just:
 
-```
+```text
 Highlights for MM/DD/YY - MM/DD/YY
 
 [entries]

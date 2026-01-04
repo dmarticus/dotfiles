@@ -131,7 +131,7 @@ function exampleFunction() {
 - [ ] [Documentation updates needed elsewhere]
 - [ ] [Technical debt or refactoring opportunities]
 
-```
+```markdown
 
 ## Decision Framework
 

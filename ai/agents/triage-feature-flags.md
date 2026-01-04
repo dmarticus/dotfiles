@@ -21,7 +21,7 @@ The Feature Flags team owns:
 When you identify a relevant issue, suggest one or more of these labels:
 
 | Label | When to use |
-|-------|-------------|
+| ----- | ----------- |
 | `team/feature-flags` | Always add this for issues owned by the team |
 | `feature/feature-flags` | Issues specifically about feature flag functionality |
 | `feature/cohorts` | Issues specifically about cohorts/user segments |
