@@ -1,0 +1,14 @@
+# Git SSH signing allowed signers file
+# This file lists public keys that are allowed to sign commits
+#
+# To set up SSH signing:
+# 1. Generate an SSH key for signing: ssh-keygen -t ed25519 -C "your-email@example.com" -f ~/.ssh/id_ed25519_signing
+# 2. Add your public key to this file in the format:
+#    your-email@example.com <key-type> <public-key> <comment>
+# 3. Configure git to use this file:
+#    git config --global gpg.format ssh
+#    git config --global user.signingkey ~/.ssh/id_ed25519_signing.pub
+#    git config --global gpg.ssh.allowedSignersFile ~/.gitconfig.allowed_signers
+#
+# Example entry (replace with your own):
+# dylan@posthog.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your-comment

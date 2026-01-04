@@ -1,0 +1,10 @@
+[user]
+        name = AUTHORNAME
+        email = AUTHOREMAIL
+[credential]
+        helper = GIT_CREDENTIAL_HELPER
+
+# SSH key signing configuration (optional)
+# Uncomment and update the path if you use Secretive or another SSH agent
+# [core]
+# 	sshCommand = ssh -o IdentityAgent=/Users/YOUR_USERNAME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
