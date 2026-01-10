@@ -29,6 +29,7 @@
 - **Test-First Development**: Use `unit-test-writer` before implementation
 - **Debugging Issues**: Use `bug-root-cause-analyzer` after 2 failed attempts
 - **Code Quality Checks**: Use `code-reviewer` before commits
+- **PR Descriptions**: Use `pull-request-writer` when preparing to open a pull request
 - **Complex Discoveries**: Use `note-taker` for non-obvious insights gained through exploration
 - **AI Prompt Issues**: Use `prompt-optimizer` for agent improvements
 - **Task Planning**: Use `task-orchestrator` to determine optimal agent workflow
@@ -44,6 +45,7 @@
 5. **Quality Check** → `code-reviewer` reviews before commit
 6. **Documentation** → `note-taker` documents complex discoveries
 7. Repeat steps 3-6 for each stage
+8. **PR Preparation** → `pull-request-writer` creates PR description (follows repo template)
 
 #### Pattern 2: Bug Investigation
 
@@ -53,6 +55,7 @@
 4. **Regression Prevention** → `unit-test-writer` adds tests to prevent recurrence
 5. **Quality Check** → `code-reviewer` reviews fix and tests
 6. **Knowledge Capture** → `note-taker` documents root cause if complex
+7. **PR Preparation** → `pull-request-writer` documents the bug, fix, and testing steps
 
 #### Pattern 3: Code Quality Improvement
 
