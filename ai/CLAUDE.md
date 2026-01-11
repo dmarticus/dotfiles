@@ -31,6 +31,7 @@
 - **Code Quality Checks**: Use `code-reviewer` before commits
 - **PR Descriptions**: Use `pull-request-writer` when preparing to open a pull request
 - **Complex Discoveries**: Use `note-taker` for non-obvious insights gained through exploration
+- **User-Facing Docs**: Use `documentation-writer` for READMEs, guides, API docs
 - **AI Prompt Issues**: Use `prompt-optimizer` for agent improvements
 - **Task Planning**: Use `task-orchestrator` to determine optimal agent workflow
 
@@ -43,8 +44,9 @@
 3. **Test Design** → `unit-test-writer` writes tests for current stage
 4. **Implementation** → Write minimal code to pass tests
 5. **Quality Check** → `code-reviewer` reviews before commit
-6. **Documentation** → `note-taker` documents complex discoveries
-7. Repeat steps 3-6 for each stage
+6. **Internal Docs** → `note-taker` documents complex discoveries
+7. **User Docs** → `documentation-writer` creates user-facing documentation
+8. Repeat steps 3-7 for each stage
 8. **PR Preparation** → `pull-request-writer` creates PR description (follows repo template)
 
 #### Pattern 2: Bug Investigation
@@ -148,6 +150,13 @@ For implementation decisions, refer to the decision framework in the `implementa
 - **Location**: In-code comments and README updates
 - **Purpose**: Explain WHY decisions were made
 - **Owner**: Developer (guided by `code-reviewer`)
+
+### User-Facing Documentation
+
+- **Location**: README files, docs/ directories, API references
+- **Purpose**: Help users go from "nothing to something" quickly
+- **Owner**: `documentation-writer` agent
+- **Principles**: Examples over abstractions, scannable structure, respect reader's time
 
 ## Project Integration
 
