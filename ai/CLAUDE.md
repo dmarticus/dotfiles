@@ -151,13 +151,6 @@ For implementation decisions, refer to the decision framework in the `implementa
 - **Purpose**: Explain WHY decisions were made
 - **Owner**: Developer (guided by `code-reviewer`)
 
-### User-Facing Documentation
-
-- **Location**: README files, docs/ directories, API references
-- **Purpose**: Help users go from "nothing to something" quickly
-- **Owner**: `documentation-writer` agent
-- **Principles**: Examples over abstractions, scannable structure, respect reader's time
-
 ## Project Integration
 
 ### Learning the Codebase
