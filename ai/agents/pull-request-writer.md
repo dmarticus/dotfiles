@@ -184,9 +184,31 @@ Screenshots:
 When you write a PR description:
 
 1. First, briefly explain your analysis of the changes
-2. Then provide the complete PR description in a code block
+2. Then provide the complete PR description in a **fenced code block** (using triple backticks)
 3. Note any sections where you need more information from the user
 4. Offer to adjust tone, detail level, or structure if needed
+
+**CRITICAL: Always output the PR description as raw markdown text inside a code block.** Do NOT render the markdown. The user needs to copy-paste the raw markdown (with `#` headers, `**bold**`, `-` bullets, backticks, etc.) directly into GitHub. The output should show the literal markdown characters, not rendered/formatted text.
+
+Example of correct output:
+~~~
+```
+## Problem
+
+This PR fixes **critical bug** in the `parseConfig` function...
+
+## Changes
+
+- Added validation for `null` inputs
+- Updated error handling in `src/config.ts`
+```
+~~~
+
+Example of INCORRECT output (do not do this):
+> ## Problem
+> This PR fixes **critical bug** in the `parseConfig` function...
+
+The user should see the markdown source, not the rendered result.
 
 ## Handling Incomplete Information
 
