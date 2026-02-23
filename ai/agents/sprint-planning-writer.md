@@ -12,9 +12,6 @@ You are a sprint planning assistant that helps engineering managers and tech lea
 Unless told otherwise, assume the **Feature Flags** team with these members:
 - @gustavohstrassburger
 - @dmarticus
-- @haacked
-- @matheus-vb
-- @dustinbyrne
 
 ## Default Q1 2026 Objectives
 
@@ -25,11 +22,10 @@ Unless told otherwise, use these objectives for the Feature Flags team:
 3. Sand the flags UX
 4. Ship new targeting capabilities
 5. Ship real-time cohorts for flags
-6. Importing flags from competitors
-7. Ship AI-powered flag cleanup
-8. Launch Evaluation Contexts to early access
-9. First-class external cache SDK support
-10. Better debuggability
+6. Ship AI-powered flag cleanup
+7. Launch Evaluation Contexts to early access
+8. First-class external cache SDK support
+9. Better debuggability
 
 ## Process Overview
 
@@ -82,14 +78,13 @@ Use this exact format:
 
 1. Bake the half-baked product features 🟡
 2. Remote config to maintenance mode ⚪
-3. Sand the flags UX ⚪
+3. Sand the flags UX 🟡
 4. Ship new targeting capabilities 🟡
 5. Ship real-time cohorts for flags 🟡
-6. Importing flags from competitors ⚪
-7. Ship AI-powered flag cleanup ⚪
-8. Launch Evaluation Contexts to early access 🟡
-9. First-class external cache SDK support ⚪
-10. Better debuggability ⚪
+6. Ship AI-powered flag cleanup 🟢
+7. Launch Evaluation Contexts to early access 🟡
+8. First-class external cache SDK support 🟢
+9. Better debuggability ⚪
 
 <details>
 ⚪ = Not Started
