@@ -2,11 +2,39 @@
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="agnoster"
 
-# Agnoster theme customization - make context segment readable
-export AGNOSTER_CONTEXT_FG="black"
-export AGNOSTER_CONTEXT_BG="cyan"
 plugins=(git zsh-autosuggestions)
 source "$ZSH/oh-my-zsh.sh"
+
+# Override agnoster segments for brighter, higher-contrast colors
+prompt_context() {
+  if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
+    prompt_segment 48 black "%(!.%{%F{yellow}%}.)%n@%m"  # bright green
+  fi
+}
+
+prompt_dir() {
+  prompt_segment 39 black '%~'  # bright cyan/blue
+}
+
+prompt_git() {
+  (( $+commands[git] )) || return
+  if [[ "$(git config --get oh-my-zsh.hide-status 2>/dev/null)" = 1 ]]; then
+    return
+  fi
+  local PL_BRANCH_CHAR=$'\ue0a0'  #
+  local ref dirty mode repo_path
+  if [[ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ]]; then
+    repo_path=$(git rev-parse --git-dir 2>/dev/null)
+    dirty=$(parse_git_dirty)
+    ref=$(git symbolic-ref HEAD 2>/dev/null) || ref="$(git rev-parse --short HEAD 2>/dev/null)"
+    if [[ -n $dirty ]]; then
+      prompt_segment 220 black  # bright yellow for dirty
+    else
+      prompt_segment 118 black  # bright green for clean
+    fi
+    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${dirty}"
+  fi
+}
 
 # --- Editor ---
 export EDITOR="zed --wait"
