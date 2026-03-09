@@ -1,0 +1,13 @@
+# .zprofile — login shell only (interactive terminals, LaunchAgents with -l).
+# Runs after /etc/zprofile (which calls path_helper and reorders PATH).
+# We re-prepend Homebrew here so it stays ahead of /usr/bin.
+
+# Homebrew — must come after path_helper to win over system paths
+if [ -d /opt/homebrew/bin ]; then
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+fi
+
+# OrbStack CLI integration
+if [ -f "$HOME/.orbstack/shell/init.zsh" ]; then
+  source "$HOME/.orbstack/shell/init.zsh" 2>/dev/null || :
+fi

@@ -47,9 +47,9 @@
 [rebase]
         autostash = true
 	autosquash = true
-	
+
 [core]
-	editor = code --wait
+	editor = zed --wait
 [init]
 	defaultBranch = main
 [user]

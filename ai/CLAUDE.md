@@ -15,6 +15,7 @@
 - Avoid premature abstractions
 - No clever tricks - choose the boring solution
 - If you need to explain it, it's too complex
+- If the type already supports an operation (via derives, traits, or methods), use it - don't reimplement
 
 ## Backwards compatibility
 
@@ -29,9 +30,7 @@
 - **Test-First Development**: Use `unit-test-writer` before implementation
 - **Debugging Issues**: Use `bug-root-cause-analyzer` after 2 failed attempts
 - **Code Quality Checks**: Use `code-reviewer` before commits
-- **PR Descriptions**: Use `pull-request-writer` when preparing to open a pull request
 - **Complex Discoveries**: Use `note-taker` for non-obvious insights gained through exploration
-- **User-Facing Docs**: Use `documentation-writer` for READMEs, guides, API docs
 - **AI Prompt Issues**: Use `prompt-optimizer` for agent improvements
 - **Task Planning**: Use `task-orchestrator` to determine optimal agent workflow
 
@@ -43,28 +42,28 @@
 2. **Planning** → `implementation-planner` creates staged plan (if complex)
 3. **Test Design** → `unit-test-writer` writes tests for current stage
 4. **Implementation** → Write minimal code to pass tests
-5. **Quality Check** → `code-reviewer` reviews before commit
-6. **Internal Docs** → `note-taker` documents complex discoveries
-7. **User Docs** → `documentation-writer` creates user-facing documentation
+5. **Simplify** → Run `/simplify` to review changed code for reuse, quality, and efficiency
+6. **Quality Check** → `code-reviewer` reviews before commit
+7. **Documentation** → `note-taker` documents complex discoveries
 8. Repeat steps 3-7 for each stage
-8. **PR Preparation** → `pull-request-writer` creates PR description (follows repo template)
 
 #### Pattern 2: Bug Investigation
 
 1. **Initial Debugging** → Try fixing yourself (max 2 attempts)
 2. **Systematic Analysis** → `bug-root-cause-analyzer` investigates
 3. **Fix Implementation** → Implement the identified solution
-4. **Regression Prevention** → `unit-test-writer` adds tests to prevent recurrence
-5. **Quality Check** → `code-reviewer` reviews fix and tests
-6. **Knowledge Capture** → `note-taker` documents root cause if complex
-7. **PR Preparation** → `pull-request-writer` documents the bug, fix, and testing steps
+4. **Simplify** → Run `/simplify` to review changed code for reuse, quality, and efficiency
+5. **Regression Prevention** → `unit-test-writer` adds tests to prevent recurrence
+6. **Quality Check** → `code-reviewer` reviews fix and tests
+7. **Knowledge Capture** → `note-taker` documents root cause if complex
 
 #### Pattern 3: Code Quality Improvement
 
 1. **Review** → `code-reviewer` identifies improvement opportunities
 2. **Test Safety Net** → `unit-test-writer` ensures comprehensive test coverage
 3. **Refactor** → Make improvements with tests passing
-4. **Final Review** → `code-reviewer` validates improvements
+4. **Simplify** → Run `/simplify` to review changed code for reuse, quality, and efficiency
+5. **Final Review** → `code-reviewer` validates improvements
 
 ## Process
 
@@ -80,9 +79,12 @@ For complex tasks, the `implementation-planner` agent creates durable, structure
 2. **Test** - Use the `unit-test-writer` agent to write tests first (red)
 3. **Implement** - Minimal code to pass (green)
 4. **Refactor** - Clean up with tests passing
-5. **Commit** - With clear message linking to plan
+5. **Simplify** - Run `/simplify` to review changed code for reuse, quality, and efficiency
+6. **Commit** - With clear message linking to plan
 
 ### 3. When Stuck (After 2 Attempts)
+
+**CRITICAL**: When implementation goes sideways, immediately switch to plan mode and re-plan. Don't keep pushing forward with a broken approach.
 
 **CRITICAL**: Maximum 2 attempts per issue, then use `bug-root-cause-analyzer` agent.
 
@@ -206,14 +208,38 @@ For implementation decisions, refer to the decision framework in the `implementa
 - Learn from existing implementations
 - Stop after 2 failed attempts and use `bug-root-cause-analyzer` agent
 - Use the `code-reviewer` agent to review code before committing
+- Run `/simplify` after completing implementation
+
+## Self-Improvement
+
+After Claude makes a mistake and you correct it, end with:
+
+> "Update your CLAUDE.md so you don't make that mistake again"
+
+Claude is good at writing rules for itself. Ruthlessly edit over time until the mistake rate drops.
+
+## Advanced Prompting Patterns
+
+### Challenge Claude
+
+- "Grill me on these changes and don't make a PR until I pass your test"
+- "Prove to me this works" (have Claude diff behavior between main and feature branch)
+
+### Iterate on Solutions
+
+- After a mediocre fix: "Knowing everything you know now, scrap this and implement the elegant solution"
+
+### Use More Compute
+
+- Append "use subagents" to any request where you want Claude to work harder
 
 ## Project-specific Workflow
 
 ### posthog/posthog
 
-When working on the <https://github.com/PostHog/posthog> repository, use the following workflow:
+When working on the https://github.com/PostHog/posthog repository, use the following workflow:
 
-- Read the README.md file in the root of the repository and the <https://github.com/PostHog/posthog/blob/master/docs/FLOX_MULTI_INSTANCE_WORKFLOW.md> file.
+- Read the README.md file in the root of the repository and the https://github.com/PostHog/posthog/blob/master/docs/FLOX_MULTI_INSTANCE_WORKFLOW.md file.
 - When taking on a new task, prompt the user whether they want to create a new git worktree using the `phw` command for the task.
 - When completing a task, automatically run these checks and fix any issues:
   - `mypy --version && mypy -p posthog | mypy-baseline filter || (echo "run 'pnpm run mypy-baseline-sync' to update the baseline" && exit 1)`
@@ -252,14 +278,12 @@ When working on other repositories, use the following workflow:
 **NEVER use socket IP addresses** - they will always be the load balancer's IP, not the client's IP.
 
 **ALWAYS use X-Forwarded-For headers** in this precedence:
-
 1. `X-Forwarded-For` (primary, set by load balancer/proxy)
 2. `X-Real-IP` (fallback)
 3. `Forwarded` (RFC 7239 standard format)
 4. Socket IP (last resort only for local development)
 
 **Common Libraries:**
-
 - Rust: `tower_governor::key_extractor::SmartIpKeyExtractor`
 - Look for similar "smart" IP extractors in other languages
 
@@ -295,22 +319,22 @@ PostHog has a lot of client SDKs. Sometimes it's useful to distinguish between t
 
 | Repository | Local Path | GitHub URL |
 |------------|------------|------------|
-| posthog-js, posthog-rn | `~/dev/posthog/posthog-js` | <https://github.com/PostHog/posthog-js> |
-| posthog-ios | `~/dev/posthog/posthog-ios` | <https://github.com/PostHog/posthog-ios> |
-| posthog-android | `~/dev/posthog/posthog-android` | <https://github.com/PostHog/posthog-android> |
-| posthog-flutter | `~/dev/posthog/posthog-flutter` | <https://github.com/PostHog/posthog-flutter> |
+| posthog-js, posthog-rn | `~/dev/posthog/posthog-js` | https://github.com/PostHog/posthog-js |
+| posthog-ios | `~/dev/posthog/posthog-ios` | https://github.com/PostHog/posthog-ios |
+| posthog-android | `~/dev/posthog/posthog-android` | https://github.com/PostHog/posthog-android |
+| posthog-flutter | `~/dev/posthog/posthog-flutter` | https://github.com/PostHog/posthog-flutter |
 
 ### Server-side SDKs
 
 | Repository | Local Path | GitHub URL |
 |------------|------------|------------|
-| posthog-python | `~/dev/posthog/posthog-python` | <https://github.com/PostHog/posthog-python> |
-| posthog-node | `~/dev/posthog/posthog-js` | <https://github.com/PostHog/posthog-node> |
-| posthog-php | `~/dev/posthog/posthog-php` | <https://github.com/PostHog/posthog-php> |
-| posthog-ruby | `~/dev/posthog/posthog-ruby` | <https://github.com/PostHog/posthog-ruby> |
-| posthog-go | `~/dev/posthog/posthog-go` | <https://github.com/PostHog/posthog-go> |
-| posthog-dotnet | `~/dev/posthog/posthog-dotnet` | <https://github.com/PostHog/posthog-dotnet> |
-| posthog-elixir | `~/dev/posthog/posthog-elixir` | <https://github.com/PostHog/posthog-elixir> |
+| posthog-python | `~/dev/posthog/posthog-python` | https://github.com/PostHog/posthog-python |
+| posthog-node | `~/dev/posthog/posthog-js` | https://github.com/PostHog/posthog-node |
+| posthog-php | `~/dev/posthog/posthog-php` | https://github.com/PostHog/posthog-php |
+| posthog-ruby | `~/dev/posthog/posthog-ruby` | https://github.com/PostHog/posthog-ruby |
+| posthog-go | `~/dev/posthog/posthog-go` | https://github.com/PostHog/posthog-go |
+| posthog-dotnet | `~/dev/posthog/posthog-dotnet` | https://github.com/PostHog/posthog-dotnet |
+| posthog-elixir | `~/dev/posthog/posthog-elixir` | https://github.com/PostHog/posthog-elixir |
 
 ## Git
 
@@ -330,6 +354,12 @@ PostHog has a lot of client SDKs. Sometimes it's useful to distinguish between t
 - When a commit fixes a bug, include the bug number in the commit message on its own line like: "Fixes #123" where 123 is the GitHub issue number.
 
 ## GitHub Operations
+
+### Voice & Attribution
+
+When writing PR descriptions, commit messages, issue comments, or any public-facing content, write as the user — never refer to yourself as an AI, agent, or assistant. Use first person ("I") to represent the user, not yourself.
+
+Never include AI/LLM attribution, co-authorship notes, or "generated with" disclaimers in PRs, commits, issues, or any public-facing content. The user owns and is responsible for all submitted code regardless of how it was produced.
 
 ### Tool Priority
 
@@ -394,7 +424,6 @@ gh api repos/owner/repo/path  # For any API endpoint
 **NEVER post PR review comments without explicit user approval.**
 
 When posting review comments:
-
 - **Always ask first** - Get user approval before posting any comment
 - **Reply to existing threads** - If discussing an existing review comment, use `gh pr review --comment` with `--body` to reply in-thread, NOT `gh issue comment` which creates root-level comments
 - **Use correct endpoints**:
@@ -438,6 +467,19 @@ gh api graphql -f query='{ ... }'
 
 ## Coding
 
+### Read Before You Write
+
+Before implementing functionality that operates on a type:
+
+1. **Read the type's definition** - struct, class, interface, enum
+2. **Note its derives, attributes, trait implementations** - these often provide the functionality you need
+3. **Check if the operation you need is already supported** - parsing, serialization, comparison, etc.
+4. **Only write custom code if the built-in capability is insufficient**
+
+**Smell test**: If you're writing >10 lines for a common operation (parsing JSON, serializing data, comparing objects), stop and verify there isn't a built-in way. Standard libraries handle these in 1-3 lines.
+
+### General Principles
+
 - When writing code, think like a principal engineer.
   - Focus on code correctness and maintainability.
   - Bias for simplicity: Prefer boring, maintainable solutions over clever ones.
@@ -454,11 +496,17 @@ gh api graphql -f query='{ ... }'
 ### Rust-Specific Guidelines
 
 #### Dependency Management
-
 - **Golden Rule**: If `cargo shear` wants to remove a dependency, either use it properly or remove it
 - **Red Flag**: Any `cargo shear` ignore should trigger investigation - unused deps indicate design problems
 - **Cargo Features**: Verify Cargo features actually enable code that exists and is used
 - **Before adding ignores**: Always investigate why the dependency appears unused and ensure it's actually needed
+
+#### Serialization/Deserialization
+
+- **Before writing any parsing/serialization code**: Read the struct definition and check its derives
+- **If a struct has `#[derive(Deserialize)]`**: Use `serde_json::from_value()`, `from_str()`, etc. - never manually extract fields
+- **If a struct has `#[derive(Serialize)]`**: Use `serde_json::to_value()`, `to_string()`, etc.
+- **Red flag**: If you're writing >10 lines to convert JSON to a struct, stop and check the derives
 
 #### Quality Checklist for Rust
 
@@ -473,7 +521,7 @@ gh api graphql -f query='{ ... }'
 ### Bash Scripts
 
 - Don't add custom logging methods to bash scripts, use the standard `echo` command.
-- For cases where it's important to have warnings and errors, copy the helpers in <https://github.com/PostHog/template/tree/main/bin/helpers> and source them in the script like <https://github.com/PostHog/template/blob/main/bin/fmt> does.
+- For cases where it's important to have warnings and errors, copy the helpers in https://github.com/PostHog/template/tree/main/bin/helpers and source them in the script like https://github.com/PostHog/template/blob/main/bin/fmt does.
 
 ### Markdown Files
 
@@ -505,10 +553,19 @@ gh api graphql -f query='{ ... }'
 
 ## Comments
 
+- Write eloquent, but concise commentary, and only comment on what is not obvious to a skilled programmer by reading the code. 
+- Comments should contain proper grammar and punctuation and should be prose-like, rather than choppy partial sentences. A human reading your code's comments
+should feel like they're reading a well-written professional whitepaper.
+- Avoid dramatic and all-caps comments.
 - IMPORTANT: Comment on the code as it is, not as it was.  For example, we recently combined two queries into one with a LEFT JOIN. Instead of saying "we combined two queries into one with a LEFT JOIN", describe what the query does now. The fact that it was combined is not important.
-- Don't comment on code that is self-explanatory.
 
 ## Approach to work
+
+### Voice Dictation
+
+Use voice dictation for prompts. You speak 3x faster than you type, and prompts get more detailed as a result.
+
+### Simple Code
 
 I like "Simple code" that means:
 

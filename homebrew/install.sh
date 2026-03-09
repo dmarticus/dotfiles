@@ -106,6 +106,7 @@ install wget
 install xz
 install ykman
 install yq
+install zed yes
 install zlib
 install zsh
 install zsh-syntax-highlighting
