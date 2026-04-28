@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 export ZSH=$HOME/.dotfiles
 
@@ -15,8 +15,8 @@ uninstall_claude_config() {
         if [ -L ~/.claude/CLAUDE.md ]; then
             rm -f ~/.claude/CLAUDE.md
             success "Removed CLAUDE.md symlink"
-        elif [ -f "$HOME/.claude/CLAUDE.md" ]; then
-            warning "$HOME/.claude/CLAUDE.md is a regular file, not a symlink - skipping"
+        elif [ -f ~/.claude/CLAUDE.md ]; then
+            warning "~/.claude/CLAUDE.md is a regular file, not a symlink - skipping"
         fi
     fi
 
@@ -32,15 +32,22 @@ uninstall_claude_config() {
         fi
     fi
 
-    # Remove command symlinks
-    if [ "$INSTALL_COMMANDS" = "true" ]; then
-        if [ -d ~/.claude/commands ]; then
-            for cmd in ~/.claude/commands/*.md; do
-                if [ -L "$cmd" ]; then
-                    rm -f "$cmd"
+    # Remove skill symlinks and contexts
+    if [ "$INSTALL_SKILLS" = "true" ]; then
+        if [ -d ~/.claude/skills ]; then
+            for skill in ~/.claude/skills/*/; do
+                [ -d "$skill" ] || continue
+                skill_name=$(basename "$skill")
+                if [ -L ~/.claude/skills/"$skill_name" ]; then
+                    rm -f ~/.claude/skills/"$skill_name"
                 fi
             done
-            success "Removed command symlinks"
+            success "Removed skill symlinks"
+        fi
+
+        if [ -L ~/.claude/contexts ]; then
+            rm -f ~/.claude/contexts
+            success "Removed contexts symlink"
         fi
     fi
 
@@ -53,7 +60,7 @@ uninstall_claude_config() {
 UNINSTALL=false
 INSTALL_CLAUDE_MD=true
 INSTALL_AGENTS=true
-INSTALL_COMMANDS=true
+INSTALL_SKILLS=true
 INSTALL_MCP=true
 INSTALL_HOOKS=true
 INSTALL_PERMISSIONS=true
@@ -69,13 +76,13 @@ show_help() {
     echo "  --cleanup           Clean up redundant entries in settings.local.json"
     echo "  --claude-md-only    Install only CLAUDE.md file"
     echo "  --agents-only       Install only agent files"
-    echo "  --commands-only     Install only slash commands"
+    echo "  --skills-only       Install only skills"
     echo "  --mcp-only          Install only MCP servers"
     echo "  --hooks-only        Install only Claude Code hooks"
     echo "  --permissions-only  Install only tool permissions"
     echo "  --no-claude-md      Skip CLAUDE.md installation"
     echo "  --no-agents         Skip agent files installation"
-    echo "  --no-commands       Skip slash commands installation"
+    echo "  --no-skills         Skip skills installation"
     echo "  --no-mcp            Skip MCP servers installation"
     echo "  --no-hooks          Skip Claude Code hooks installation"
     echo "  --no-permissions    Skip tool permissions configuration"
@@ -105,7 +112,7 @@ while [ $# -gt 0 ]; do
         --claude-md-only)
             INSTALL_CLAUDE_MD=true
             INSTALL_AGENTS=false
-            INSTALL_COMMANDS=false
+            INSTALL_SKILLS=false
             INSTALL_MCP=false
             INSTALL_HOOKS=false
             INSTALL_PERMISSIONS=false
@@ -114,16 +121,16 @@ while [ $# -gt 0 ]; do
         --agents-only)
             INSTALL_CLAUDE_MD=false
             INSTALL_AGENTS=true
-            INSTALL_COMMANDS=false
+            INSTALL_SKILLS=false
             INSTALL_MCP=false
             INSTALL_HOOKS=false
             INSTALL_PERMISSIONS=false
             shift
             ;;
-        --commands-only)
+        --skills-only)
             INSTALL_CLAUDE_MD=false
             INSTALL_AGENTS=false
-            INSTALL_COMMANDS=true
+            INSTALL_SKILLS=true
             INSTALL_MCP=false
             INSTALL_HOOKS=false
             INSTALL_PERMISSIONS=false
@@ -132,7 +139,7 @@ while [ $# -gt 0 ]; do
         --mcp-only)
             INSTALL_CLAUDE_MD=false
             INSTALL_AGENTS=false
-            INSTALL_COMMANDS=false
+            INSTALL_SKILLS=false
             INSTALL_MCP=true
             INSTALL_HOOKS=false
             INSTALL_PERMISSIONS=false
@@ -141,7 +148,7 @@ while [ $# -gt 0 ]; do
         --hooks-only)
             INSTALL_CLAUDE_MD=false
             INSTALL_AGENTS=false
-            INSTALL_COMMANDS=false
+            INSTALL_SKILLS=false
             INSTALL_MCP=false
             INSTALL_HOOKS=true
             INSTALL_PERMISSIONS=false
@@ -150,7 +157,7 @@ while [ $# -gt 0 ]; do
         --permissions-only)
             INSTALL_CLAUDE_MD=false
             INSTALL_AGENTS=false
-            INSTALL_COMMANDS=false
+            INSTALL_SKILLS=false
             INSTALL_MCP=false
             INSTALL_HOOKS=false
             INSTALL_PERMISSIONS=true
@@ -164,8 +171,8 @@ while [ $# -gt 0 ]; do
             INSTALL_AGENTS=false
             shift
             ;;
-        --no-commands)
-            INSTALL_COMMANDS=false
+        --no-skills)
+            INSTALL_SKILLS=false
             shift
             ;;
         --no-mcp)
@@ -200,7 +207,7 @@ fi
 
 # If cleanup flag is set, run cleanup and exit
 if [ "$CLEANUP_ONLY" = "true" ]; then
-    $ZSH/ai/bin/cleanup-settings-local.sh
+    $ZSH/ai/skills/analyze-permissions/scripts/cleanup-settings-local.sh
     exit 0
 fi
 
@@ -227,26 +234,39 @@ if [ "$INSTALL_AGENTS" = "true" ]; then
     success "Symlinked agents"
 fi
 
-# Symlink commands
-if [ "$INSTALL_COMMANDS" = "true" ]; then
-    mkdir -p ~/.claude/commands
-    for cmd in $ZSH/ai/commands/*.md; do
-        [ -e "$cmd" ] || continue  # Skip if no files match
-        cmd_name=$(basename "$cmd")
-        rm -f ~/.claude/commands/"$cmd_name"
-        ln -sf "$cmd" ~/.claude/commands/"$cmd_name"
+# Symlink skills (directories, not files)
+if [ "$INSTALL_SKILLS" = "true" ]; then
+    mkdir -p ~/.claude/skills
+    for skill_dir in $ZSH/ai/skills/*/; do
+        [ -d "$skill_dir" ] || continue
+        skill_name=$(basename "$skill_dir")
+        rm -rf ~/.claude/skills/"$skill_name"
+        ln -sf "$skill_dir" ~/.claude/skills/"$skill_name"
     done
-    success "Symlinked commands"
+    success "Symlinked skills"
+
+    # Symlink contexts (for language-specific writing guidelines)
+    rm -f ~/.claude/contexts
+    ln -sf $ZSH/ai/contexts ~/.claude/contexts
+    success "Symlinked contexts"
+
+    # Clean up old command symlinks that were migrated to skills
+    MIGRATED_COMMANDS="note support standup analyze-permissions triage-issues"
+    for cmd in $MIGRATED_COMMANDS; do
+        if [ -L ~/.claude/commands/"$cmd".md ] || [ -f ~/.claude/commands/"$cmd".md ]; then
+            rm -f ~/.claude/commands/"$cmd".md
+        fi
+    done
+    success "Cleaned up migrated command symlinks"
 fi
 
 # Define MCP servers as a list of entries
 # Format: "name|description|command"
 MCP_SERVERS="
-posthog-db|PostHog database connection|/Users/dylan/.local/bin/postgres-mcp --access-mode=restricted
-puppeteer|Puppeteer web automation|npx -y @modelcontextprotocol/server-puppeteer
+posthog-db|PostHog database connection|$HOME/.local/bin/postgres-mcp --access-mode=restricted
+posthog-remote|PostHog hosted MCP (SQL over data warehouse)|npx -y mcp-remote@latest https://mcp.posthog.com/mcp?features=sql,data_warehouse --header \"Authorization:\${POSTHOG_MCP_AUTH_HEADER}\"
 memory|Persistent memory across sessions|npx -y @modelcontextprotocol/server-memory
-git|Structured git operations|npx -y @modelcontextprotocol/server-git
-grafana|Grafana MCP server|/Users/dylan/.dotfiles/bin/mcp-grafana-wrapper.sh
+grafana|Grafana MCP server|$HOME/.dotfiles/bin/mcp-grafana-wrapper.sh
 "
 
 # Special environment variables for specific servers
@@ -255,6 +275,9 @@ set_server_env() {
     case "$server_name" in
         posthog-db)
             echo "-e DATABASE_URI=postgresql://posthog:posthog@localhost:5432/posthog"
+            ;;
+        posthog-remote)
+            echo "-e POSTHOG_MCP_AUTH_HEADER=\"\${POSTHOG_MCP_AUTH_HEADER}\""
             ;;
         *)
             echo ""
@@ -285,7 +308,11 @@ if [ "$INSTALL_MCP" = "true" ]; then
                 claude mcp add --scope user ${name} -- ${command}
             fi
 
-            success "${description} installed"
+            if [ $? -eq 0 ]; then
+                success "${description} installed"
+            else
+                error "${description} failed to install"
+            fi
         else
             success "${description} already installed"
         fi
@@ -318,6 +345,18 @@ if [ "$INSTALL_HOOKS" = "true" ]; then
         HOOKS_CONFIG=$(cat <<'EOF'
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.dotfiles/ai/bin/lang-context",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit",
@@ -331,11 +370,6 @@ if [ "$INSTALL_HOOKS" = "true" ]; then
             "type": "command",
             "command": "if [ -n \"$CLAUDE_FILE_PATHS\" ]; then for file in $CLAUDE_FILE_PATHS; do if [[ \"$file\" == *.py ]]; then if command -v ruff > /dev/null 2>&1; then ruff format \"$file\" || echo \"Ruff format failed for $file\"; else echo \"Ruff not installed - skipping Python formatting\"; fi; fi; done; fi",
             "timeout": 30
-          },
-          {
-            "type": "command",
-            "command": "if [ -d .github/workflows ]; then if grep -r 'mypy' .github/workflows/ > /dev/null 2>&1; then if command -v mypy > /dev/null 2>&1; then echo 'Running mypy...'; mypy .; else echo 'MyPy configured in CI but not installed locally'; fi; fi; fi",
-            "timeout": 120
           }
         ]
       },
@@ -351,11 +385,6 @@ if [ "$INSTALL_HOOKS" = "true" ]; then
             "type": "command",
             "command": "if [ -n \"$CLAUDE_FILE_PATHS\" ]; then for file in $CLAUDE_FILE_PATHS; do if [[ \"$file\" == *.py ]]; then if command -v ruff > /dev/null 2>&1; then ruff format \"$file\" || echo \"Ruff format failed for $file\"; else echo \"Ruff not installed - skipping Python formatting\"; fi; fi; done; fi",
             "timeout": 30
-          },
-          {
-            "type": "command",
-            "command": "if [ -d .github/workflows ]; then if grep -r 'mypy' .github/workflows/ > /dev/null 2>&1; then if command -v mypy > /dev/null 2>&1; then echo 'Running mypy...'; mypy .; else echo 'MyPy configured in CI but not installed locally'; fi; fi; fi",
-            "timeout": 120
           }
         ]
       },
@@ -371,11 +400,17 @@ if [ "$INSTALL_HOOKS" = "true" ]; then
             "type": "command",
             "command": "if [ -n \"$CLAUDE_FILE_PATHS\" ]; then for file in $CLAUDE_FILE_PATHS; do if [[ \"$file\" == *.py ]]; then if command -v ruff > /dev/null 2>&1; then ruff format \"$file\" || echo \"Ruff format failed for $file\"; else echo \"Ruff not installed - skipping Python formatting\"; fi; fi; done; fi",
             "timeout": 30
-          },
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
           {
             "type": "command",
-            "command": "if [ -d .github/workflows ]; then if grep -r 'mypy' .github/workflows/ > /dev/null 2>&1; then if command -v mypy > /dev/null 2>&1; then echo 'Running mypy...'; mypy .; else echo 'MyPy configured in CI but not installed locally'; fi; fi; fi",
-            "timeout": 120
+            "command": "if [ -f Cargo.toml ]; then cargo fmt 2>/dev/null || true; fi",
+            "timeout": 30
           }
         ]
       }
