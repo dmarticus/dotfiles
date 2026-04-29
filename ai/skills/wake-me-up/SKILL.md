@@ -197,7 +197,7 @@ Compose a short post — not the whole markdown file. Slack mrkdwn won't render 
 
 - Lead with `**Start of day — {date}**`. Just the date — no parentheticals, disclaimers, or "(re-render with X applied)" suffixes. The post should look the same every time at a glance.
 - Section order: Slack → Review requests → Your work → Ops (omit if empty).
-- **Spacing**: Slack collapses whitespace, but it does respect blank lines between paragraphs. Insert a blank line between every section AND between a section header and its content. Slack still squeezes things tight, but blank lines give the eye somewhere to rest. Don't run a section header directly into the previous list.
+- **Spacing**: Slack collapses pure-whitespace spacing, so blank lines barely register visually. Use a literal separator line — `─────` (a short bar of unicode em-dashes) — between major sections. It renders as a thin horizontal break and gives the eye an actual rest point. One blank line above and below the separator. No separator before the first section.
 - **Hyperlink the source artifact** (Slack thread permalink, ticket URL, GitHub issue) so everything is tappable on mobile — never just the channel name. For Slack-originated items, link the message permalink, not the channel.
 - Review queue: list **all** PRs that pass the "needs my input" filter (Step 3), grouped by tier (teammates first, then others), one terse line each — `🔥 [#NNNN](url) @author — short description`. Don't truncate with "…and N more". End the section with a link to the GitHub review queue.
 
@@ -213,6 +213,8 @@ Concrete shape:
 • {item}
 • {item}
 
+─────
+
 🔍 **Review requests** — N needing your input
 
 **Teammates:**
@@ -222,6 +224,8 @@ Concrete shape:
 • 🔥 [#Y](url) @author — desc
 
 [all review-requested →](url)
+
+─────
 
 🚀 **Your work**
 
