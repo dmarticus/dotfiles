@@ -138,9 +138,25 @@ the user's call.}
 - [ ]
 ```
 
-### Step 8: Show and open
+### Step 8: Optional Slack post (when `morning_post_to:` is set)
 
-Print the report path. If `$EDITOR` is set, prompt: "Open in $EDITOR?" — open if user confirms.
+If `channels.yml` has a `morning_post_to:` field (e.g. `#dylanthropy` for a personal channel), publish a condensed Slack-flavored version of the briefing there. Skip this step silently if the field is missing or the Slack MCP isn't connected.
+
+Compose a short post — not the whole markdown file. Slack mrkdwn won't render headers cleanly, and the file path is useless from a phone. Aim for 8–15 lines total:
+
+- Lead with `*Start of day — {date}*` (mrkdwn bold).
+- Top 3 urgent / blocker items, one line each. Skip if none.
+- Review queue: just the 🔥 PRs (>24h old). Cap at 5; if more, end with `…and N more`.
+- Today's plan as a checklist (use `•` not `- [ ]` since Slack doesn't render markdown checkboxes).
+- Final line: `full briefing: ~/dev/ai/notes/wake-me-up/{date}.md` (acts as a reminder that the local file has the full picture).
+
+Use `<url|text>` link syntax. No AI/LLM attribution. Post directly with `slack_send_message` — no confirmation prompt for the morning post (the user opted in via config).
+
+If posting fails, surface the error but don't fail the whole skill — the local file is still the source of truth.
+
+### Step 9: Show and open
+
+Print the report path (and the Slack message link if Step 8 ran). If `$EDITOR` is set, prompt: "Open in $EDITOR?" — open if user confirms.
 
 ## Categorization rules (judgment calls)
 
@@ -152,7 +168,7 @@ Print the report path. If `$EDITOR` is set, prompt: "Open in $EDITOR?" — open 
 
 ## Configuration
 
-`~/dev/ai/notes/wake-me-up/channels.yml` (user-maintained) controls Slack channel weights:
+`~/dev/ai/notes/wake-me-up/channels.yml` (user-maintained) controls Slack channel weights and optional auto-posting:
 
 ```yaml
 channels:
@@ -160,6 +176,10 @@ channels:
   posthog-eng:        { weight: med,  summarize_above: 10 }
   general:            { weight: low,  summarize_above: 30 }
   eng-announcements:  { weight: high, summarize_above: 0 }
+
+# Optional: auto-post a condensed briefing to a personal channel for mobile access.
+# Channel name (with or without #) or @username for DM. Omit to disable.
+morning_post_to: "#dylanthropy"
 ```
 
-If the file is missing, do step 5 against a default of `team-feature-flags` only and tell the user to create the file.
+If the file is missing, do step 5 against a default of `team-feature-flags` only, skip step 8, and tell the user to create the file.
