@@ -54,12 +54,19 @@ If no prior file exists, skip carry-over.
 ### Step 3: GitHub
 
 ```bash
-~/.claude/skills/wake-me-up/scripts/github-attention.sh --since "$SINCE"
+# If channels.yml has project_board: "<org>/<number>", pass it through:
+~/.claude/skills/wake-me-up/scripts/github-attention.sh --since "$SINCE" --project-board "$PROJECT_BOARD"
 ```
 
-Output is JSON with three arrays: `review_requested` (each PR includes `review_decision`), `my_open_prs` (each PR includes `checks_state`), and `mentions`.
+Output JSON has four arrays:
+- `review_requested` — each PR includes `review_decision`
+- `my_open_prs` — each PR includes `checks_state`
+- `mentions`
+- `project_items` — open issues/PRs assigned to the user from the configured project board (excludes Done/Cancelled), each with `status` (e.g. "In Progress", "Todo")
 
-**Filter `review_requested` before surfacing.** Only show PRs where `review_decision == "REVIEW_REQUIRED"` (or null/missing — same meaning). Drop PRs with `review_decision` of `APPROVED` or `CHANGES_REQUESTED` — those already have substantive feedback from someone else and don't need the user's input to ship. The briefing exists to surface what genuinely needs the user; it should not show PRs other people are already owning.
+**Filter `review_requested` before surfacing.** Only show PRs where `review_decision == "REVIEW_REQUIRED"` (or null/missing — same meaning). Drop PRs with `review_decision` of `APPROVED` or `CHANGES_REQUESTED` — those already have substantive feedback from someone else and don't need the user's input to ship.
+
+**Highlight `my_open_prs` created since `$SINCE`** with `🆕` — those are the day's new work that the user might want to track. Group the multi-SDK `evaluate_flags` train (or any similar multi-repo effort) onto a single line if they share a title pattern; don't list 9 separate bullets for what's logically one effort.
 
 ### Step 4: Zendesk
 
@@ -139,39 +146,40 @@ Write to `$OUT_FILE` using this structure. Omit empty sections rather than showi
 
 > Briefing covers activity since {since timestamp, human readable}
 
-## 🚨 Blockers / Urgent
-{Items requiring action today: customer-facing tickets, security, prod incident,
-PRs blocking your work. Each item: 1 line + link.}
+## 💬 Slack
+{Actionable items only — direct asks, customer-call requests, prod incident pings, manager DMs. Hyperlink the source thread/message permalink. Skip channels and per-channel summaries unless an item demands action.}
+- {Ping summary} — [thread](permalink)
 
-## 🔄 Awaiting your review
-{PRs requested from you. Group by author tier — teammates first (from `teammates:` in channels.yml), then everyone else. Within each group, sort by age. PRs older than 24h get 🔥. If a tier has no PRs, omit its subheading.}
+## 🔍 Review requests
+{PRs needing the user's input (filtered by `review_decision == REVIEW_REQUIRED` and `relevance.yml`). Group by author tier — teammates first, then others. PRs >24h get 🔥. End the section with a link to the GitHub review queue.}
 
 ### From teammates
-- 🔥 [#1234 Title](url) — by @teammate, 2d
-- [#1235 Title](url) — by @teammate, 4h
+- 🔥 [#1234 Title](url) — @teammate, 2d
 
 ### From everyone else
-- 🔥 [#9876 Title](url) — by @rando, 12d
-- [#9877 Title](url) — by @rando, 6h
+- 🔥 [#9876 Title](url) — @rando, 12d
 
-## 🛠️ Your work in flight
-{Your open PRs with status.}
-- [#5678 Title](url) — CI: ✅ passing | 🔴 failing | 🟡 pending — {N new comments}
+[all review-requested →](https://github.com/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me)
 
-## 🎫 Zendesk (Feature Flags)
-{New + customer-replied tickets. Aging tickets in a sub-bullet.}
-- New: 3
-- Customer replied: 1 — [Ticket #1234](url) — {1-line summary}
-- Aging (>7d): 2
+## 🚀 Your work
+{Issues from the project board (in_progress + todos) + your open PRs.}
 
-## 💬 Overnight catch-up
-### Slack
-{Per-channel summaries. Quiet channels collapsed.}
-- **#team-feature-flags** (14 msgs): Ruby announced spec change at 09:23. Gus
-  shipped the cohort eval fix. Question for you in thread {link}.
-- **#general**: (quiet)
-- **DMs**: 2 unread — gustavo (auth issue?), ruby (sprint planning)
-- **@-mentions**: 1 — {link, context}
+### In progress (from project board)
+- [#NNNN](url) — title
+
+### Todo (from project board)
+- [#NNNN](url) — title (omit section if none)
+
+### Open PRs (N)
+- 🆕 [#NNNN](url) — title (created since SINCE)
+- [#NNNN](url) — title
+- multi-repo train: collapse logically-grouped PRs onto one line
+
+[all my PRs →](https://github.com/pulls?q=is%3Aopen+is%3Apr+author%3A<USERNAME>+archived%3Afalse)
+
+## 🎫 Ops
+{Escalated Zendesk tickets only. Omit this section entirely if there are zero. Don't show "0 escalated" — just leave it out.}
+- [Ticket #NNNN](url) — title
 
 ## 📋 Carry-over from yesterday
 {Unchecked items from previous wake-me-up file, after auto-skip pass (Step 2).}
@@ -227,11 +235,15 @@ channels:
   team-code:             { weight: low, summarize_above: 3 }
   papercuts:             { weight: low, summarize_above: 1 }
 
-# Direct teammates — their PRs are sorted to the top of "Awaiting your review".
+# Direct teammates — their PRs are sorted to the top of "Review requests".
 # GitHub logins (case-sensitive).
 teammates:
   - gustavohstrassburger
   - haacked
+
+# GitHub project board to fetch your assigned issues from for "Your work".
+# Format: "<org>/<project_number>". Omit to skip the project board fetch.
+project_board: "PostHog/112"
 
 # Watchlist: scan for topic mentions, then filter by channel name pattern.
 # Useful for ephemeral customer/engagement channels (#posthog-*) that come and go.

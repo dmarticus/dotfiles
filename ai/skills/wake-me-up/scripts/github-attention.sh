@@ -1,20 +1,44 @@
 #!/usr/bin/env bash
 # Emit a JSON object describing what needs the user's attention on GitHub:
-# review requests, their open PRs (with CI status), and @-mentions.
+# review requests, their open PRs (with CI status), @-mentions, and items
+# assigned to them on a project board.
 #
-# Usage: github-attention.sh [--since <ISO 8601 timestamp>]
+# Usage: github-attention.sh [--since <ISO>] [--project-board <org>/<number>]
 
 set -euo pipefail
 
 SINCE=""
+PROJECT_BOARD=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --since) SINCE="$2"; shift 2 ;;
+        --project-board) PROJECT_BOARD="$2"; shift 2 ;;
         *) echo "Unknown arg: $1" >&2; exit 2 ;;
     esac
 done
 
 USER_LOGIN=$(gh api user --jq '.login')
+
+project_items="[]"
+if [ -n "$PROJECT_BOARD" ]; then
+    pb_org="${PROJECT_BOARD%/*}"
+    pb_num="${PROJECT_BOARD#*/}"
+    project_items=$(gh project item-list "$pb_num" --owner "$pb_org" --limit 100 --format json 2>/dev/null \
+        | jq --arg user "$USER_LOGIN" '
+            [.items[]
+                | select(.assignees != null and (.assignees | index($user)))
+                | select(.status != "Done" and .status != "Cancelled")
+                | {
+                    status,
+                    title,
+                    number: .content.number,
+                    repo: .content.repository,
+                    type: .content.type,
+                    url: .content.url,
+                    labels
+                }
+            ]' || echo "[]")
+fi
 
 review_requested_raw=$(
     gh search prs --review-requested "@me" --state open \
@@ -69,6 +93,7 @@ jq -n \
     --argjson review_requested "$review_requested" \
     --argjson my_open_prs "$my_open_prs" \
     --argjson mentions "$mentions" \
+    --argjson project_items "$project_items" \
     --arg user "$USER_LOGIN" \
     --arg since "$SINCE" \
-    '{user: $user, since: $since, review_requested: $review_requested, my_open_prs: $my_open_prs, mentions: $mentions}'
+    '{user: $user, since: $since, review_requested: $review_requested, my_open_prs: $my_open_prs, mentions: $mentions, project_items: $project_items}'
