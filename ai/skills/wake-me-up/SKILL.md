@@ -81,6 +81,12 @@ Then:
 - List unread DMs (sender + first-line preview).
 - List @-mentions in threads with link.
 
+#### Watchlist (customer channels)
+
+If `channels.yml` defines a `watchlist:` block, also scan channels matching `channel_pattern` (e.g. `posthog-*` for customer engagement channels) for messages mentioning any of the `topics` (default: `feature flag`, `cohort`, `early access`, `flag eval`). Surface ONLY the hits — not a full channel summary. Format each hit as `#channel — {one-line preview} ({link})`.
+
+The point: you don't have to maintain a list of customer channels (they come and go), but you still hear if a customer channel mentions your product area.
+
 ### Step 6: PostHog
 
 Stub for now. Output: `PostHog: no signals configured yet.`
@@ -168,18 +174,34 @@ Print the report path (and the Slack message link if Step 8 ran). If `$EDITOR` i
 
 ## Configuration
 
-`~/dev/ai/notes/wake-me-up/channels.yml` (user-maintained) controls Slack channel weights and optional auto-posting:
+`~/dev/ai/notes/wake-me-up/channels.yml` (user-maintained) controls Slack monitoring and optional auto-posting.
+
+`weight` is binary: `high` always surfaces (even with 0 messages — silence is signal in announcement-style channels), `low` collapses to `(quiet)` when message count is below `summarize_above`.
 
 ```yaml
 channels:
-  team-feature-flags: { weight: high, summarize_above: 1 }
-  posthog-eng:        { weight: med,  summarize_above: 10 }
-  general:            { weight: low,  summarize_above: 30 }
-  eng-announcements:  { weight: high, summarize_above: 0 }
+  team-feature-flags:    { weight: high }
+  team-flags-platform:   { weight: high }
+  team-blitzscale:       { weight: high }
+  tell-posthog-anything: { weight: high }
+  ask-posthog-anything:  { weight: low, summarize_above: 5 }
+  dev:                   { weight: low, summarize_above: 5 }
+  dev-stamp-exchange:    { weight: low, summarize_above: 1 }
+  team-code:             { weight: low, summarize_above: 3 }
+  papercuts:             { weight: low, summarize_above: 1 }
+
+# Watchlist: scan any channel matching the pattern for topic mentions.
+# Useful for ephemeral customer/engagement channels (#posthog-*) that come and go.
+watchlist:
+  channel_pattern: "posthog-*"
+  topics: ["feature flag", "cohort", "early access", "flag eval"]
 
 # Optional: auto-post a condensed briefing to a personal channel for mobile access.
-# Channel name (with or without #) or @username for DM. Omit to disable.
 morning_post_to: "#dylanthropy"
+
+# Used by the closing-time skill for the EOD wrap-up post.
+wrap_up:
+  post_to: "#team-feature-flags"
 ```
 
-If the file is missing, do step 5 against a default of `team-feature-flags` only, skip step 8, and tell the user to create the file.
+If the file is missing, do step 5 against a default of `team-feature-flags` only, skip the watchlist and step 8, and tell the user to create the file.
