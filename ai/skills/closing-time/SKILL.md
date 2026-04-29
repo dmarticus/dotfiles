@@ -34,11 +34,18 @@ If `$BRIEFING` doesn't exist, ask the user whether they want to proceed without 
 
 ### Step 2: Read the morning briefing
 
-Read `$BRIEFING` and extract:
-- Items that were marked urgent (Blockers section).
-- PRs in flight (yours).
-- Today's plan checklist — note which items are checked off (`- [x]`) vs still open (`- [ ]`).
-- Any free-form notes the user appended during the day.
+Read `$BRIEFING` and extract everything that was *on the user's radar this morning* — these become the day's effective TODO list, even though the briefing intentionally doesn't include a proposed-plan section. Pull items from these sections:
+
+- `💬 Slack` — direct asks/pings (e.g. "Leonhard wants you on a call", "Patricio asks X")
+- `🔍 Review requests` — PRs needing the user's input
+- `🚀 Your work` → `In progress` — project-board issues the user was actively working
+- `🚀 Your work` → `Open PRs` — especially anything marked 🆕 (created today)
+- `📋 Carry-over from yesterday` — items the user hadn't gotten to
+- `🎫 Ops` — escalated tickets (if present)
+
+Hold the union of these as `morning_items`. Step 4 will report against them.
+
+Also extract any free-form notes the user appended during the day (e.g. status updates added to the briefing file mid-day).
 
 ### Step 3: Collect what shipped
 
@@ -52,25 +59,51 @@ If they reply "use the briefing" or similar, infer from checked-off plan items a
 
 ### Step 4: Draft the Slack post
 
-Compose a short Slack-flavored update. Conventions:
+Cross-reference what the user just told you against `morning_items`. Bucket each item into one of three states:
 
-- Lead with the most concrete shipped/landed thing.
-- One bullet per item. Link PRs and tickets inline using Slack link syntax: `<url|text>`.
-- Keep it terse — aim for 5–8 bullets, not a novel.
-- Match Dylan's voice from the briefing: lowercase-friendly, direct, no marketing language. No "I'm excited to share that…" preambles.
+- **Done** — user explicitly mentioned shipping/resolving it, OR a referenced PR/issue is now merged/closed (verifiable via gh).
+- **In flight** — user mentioned progress but didn't finish, or it's still open.
+- **Untouched** — was on the morning radar but wasn't mentioned at all in the user's input.
+
+Then draft the Slack post with this shape (parallel to wake-me-up's structure so it reads as a closing of the loop):
+
+```
+**End of day — {date}**
+
+✅ **Done**
+
+• {item} {link}
+• {item} {link}
+
+─────
+
+🟡 **In flight**
+
+• {item} — {one-line status if the user gave one} {link}
+
+─────
+
+📋 **Carrying to tomorrow**
+
+• {item that was on the radar but didn't get touched}
+
+─────
+
+🚀 **Bonus** _(only if non-empty — work shipped that wasn't on the morning list)_
+
+• {item} {link}
+```
+
+Conventions:
+
+- One bullet per item. Hyperlink the source artifact using Slack's link syntax `<url|text>` — same as the morning post.
+- Keep each bullet terse; one line each. Aim for 8–12 bullets total across all sections.
+- Match Dylan's voice from the morning briefing: lowercase-friendly, direct, no marketing language, no "I'm excited to share…" preambles.
 - Never include AI/LLM attribution or co-authorship. Write as Dylan.
-- If a blocker from the morning is still open, mention it explicitly under a `still open:` line so it carries to tomorrow.
+- Use the same `─────` separators between sections that the morning post uses.
+- Omit any section that's empty (don't write `**Bonus**` followed by nothing).
 
-Example shape (illustrative, not a template to copy literally):
-
-```
-EOD wrap:
-• shipped <url|posthog-python#539> — single-call evaluate_flags()
-• <url|#56822> error boundary fix is in review
-• picked up <url|ticket #57101> latency report — initial triage shows X
-still open:
-• phil's encrypted-payload regression on remote config flags — picking up tomorrow
-```
+If a `Done` item maps cleanly to a morning `Slack` ping or `Review requests` entry, mention that connection in the bullet (e.g. "replied to Leonhard re: Voy call → booked for Friday"). The point is to close the loop.
 
 ### Step 5: Confirm before posting
 
