@@ -1,0 +1,165 @@
+---
+name: wake-me-up
+description: >
+  Build a categorized morning briefing pulling from GitHub (PRs awaiting your
+  review, your open PRs, @-mentions), Zendesk (Feature Flags team tickets),
+  Slack (team channels, DMs, mentions — when MCP is configured), and PostHog
+  (stub). Writes a markdown report to ~/dev/ai/notes/wake-me-up/{date}.md and
+  surfaces blockers, review requests, in-flight work, and overnight catch-up.
+  Use when the user says "/wake-me-up", "what do I need to do today",
+  "morning briefing", or wants to triage their inbox.
+argument-hint: "[--since <ISO timestamp>]"
+model: sonnet
+---
+
+# Wake Me Up
+
+Build a categorized briefing that helps the user get up to speed fast after EU has been yapping all morning.
+
+`since` = the `--since` value if provided, otherwise default to yesterday 17:00 local time, or last Friday 17:00 if today is Monday.
+
+## Purpose
+
+Cut through overnight noise and surface what actually matters today, organized by what action it needs.
+
+## Steps
+
+### Step 1: Setup
+
+Compute three values: `SINCE` (ISO 8601 with timezone, used for the GitHub/Zendesk scripts), `SINCE_EPOCH` (Unix seconds, used as `oldest` for Slack reads), and `TODAY` (output file path). Always derive `SINCE_EPOCH` from `SINCE` rather than constructing it by hand — passing a hand-built epoch to Slack is the bug that returned year-old data on the first run.
+
+```bash
+TODAY=$(date +%Y-%m-%d)
+OUT_DIR="$HOME/dev/ai/notes/wake-me-up"
+OUT_FILE="$OUT_DIR/$TODAY.md"
+mkdir -p "$OUT_DIR"
+
+# SINCE: yesterday 17:00 local, or last Friday 17:00 if today is Monday. Pass the value to the user-supplied --since if provided.
+# Default (macOS BSD date):
+SINCE=$(date -v-1d -v17H -v0M -v0S "+%Y-%m-%dT%H:%M:%S%z")
+# Always derive epoch from SINCE so year/timezone can't drift:
+SINCE_EPOCH=$(date -j -f "%Y-%m-%dT%H:%M:%S%z" "$SINCE" "+%s")
+```
+
+### Step 2: Read carry-over from yesterday
+
+Find the most recent file in `~/dev/ai/notes/wake-me-up/` (excluding today's). If found, read it and extract any unchecked checklist items (`- [ ]`). These are carry-over.
+
+If no prior file exists, skip carry-over.
+
+### Step 3: GitHub
+
+```bash
+~/.claude/skills/wake-me-up/scripts/github-attention.sh --since "$SINCE"
+```
+
+Output is JSON with three arrays: `review_requested`, `my_open_prs` (each PR includes `checks_state`), and `mentions`.
+
+### Step 4: Zendesk
+
+```bash
+~/.claude/skills/wake-me-up/scripts/zendesk-flags.sh --since "$SINCE"
+```
+
+Output is JSON with: `new_tickets`, `customer_replied` (tickets where the most recent comment is from the customer), `aging` (tickets open >7 days with no internal reply).
+
+If the script reports it's not configured, include a short note in the report ("Zendesk: not configured — see scripts/zendesk-flags.sh") and continue.
+
+### Step 5: Slack (when MCP is configured)
+
+If a Slack MCP is connected, do the following. Otherwise skip and note "Slack: MCP not configured" in the report.
+
+For each of the user's monitored channels (read from `~/dev/ai/notes/wake-me-up/channels.yml` if present, otherwise prompt the user to populate it):
+
+1. Fetch messages with `slack_read_channel`, passing `oldest: "$SINCE_EPOCH"` (the Unix-seconds value computed in Step 1, NOT a hand-constructed timestamp). Slack's API silently accepts wrong epochs, so a year drift returns plausible-looking but stale data.
+2. If the channel weight is `low` and the message count is below `summarize_above`, mark "(quiet)" and move on.
+3. Otherwise:
+   - Summarize in 1–3 lines.
+   - Flag explicitly if any message mentions the user, mentions a feature flags topic (`feature flag`, `cohort`, `early access`, `flag eval`), or references one of the user's open PR numbers (from Step 3).
+
+Then:
+- List unread DMs (sender + first-line preview).
+- List @-mentions in threads with link.
+
+### Step 6: PostHog
+
+Stub for now. Output: `PostHog: no signals configured yet.`
+
+When ready, this step will fetch firing alerts, dashboards trending the wrong way, and saved insights with anomalies.
+
+### Step 7: Categorize and write report
+
+Write to `$OUT_FILE` using this structure. Omit empty sections rather than showing them as empty.
+
+```markdown
+# Start of day — {YYYY-MM-DD}
+
+> Briefing covers activity since {since timestamp, human readable}
+
+## 🚨 Blockers / Urgent
+{Items requiring action today: customer-facing tickets, security, prod incident,
+PRs blocking your work. Each item: 1 line + link.}
+
+## 🔄 Awaiting your review
+{PRs requested from you. Sort by age. PRs older than 24h get 🔥.}
+- 🔥 [#1234 Title](url) — by @author, requested 2d ago
+- [#1235 Title](url) — by @author, requested 4h ago
+
+## 🛠️ Your work in flight
+{Your open PRs with status.}
+- [#5678 Title](url) — CI: ✅ passing | 🔴 failing | 🟡 pending — {N new comments}
+
+## 🎫 Zendesk (Feature Flags)
+{New + customer-replied tickets. Aging tickets in a sub-bullet.}
+- New: 3
+- Customer replied: 1 — [Ticket #1234](url) — {1-line summary}
+- Aging (>7d): 2
+
+## 💬 Overnight catch-up
+### Slack
+{Per-channel summaries. Quiet channels collapsed.}
+- **#team-feature-flags** (14 msgs): Ruby announced spec change at 09:23. Gus
+  shipped the cohort eval fix. Question for you in thread {link}.
+- **#general**: (quiet)
+- **DMs**: 2 unread — gustavo (auth issue?), ruby (sprint planning)
+- **@-mentions**: 1 — {link, context}
+
+## 📋 Carry-over from yesterday
+{Unchecked items from previous wake-me-up file.}
+- [ ] Finish migration plan for X
+- [ ] Reply to gustavo's thread
+
+## 📝 Today's plan
+{Empty checklist for the user to fill in. Include the most likely candidates
+inferred from the above as suggestions, prefixed with `-`. Final commitment is
+the user's call.}
+- [ ] {suggested item 1}
+- [ ] {suggested item 2}
+- [ ]
+```
+
+### Step 8: Show and open
+
+Print the report path. If `$EDITOR` is set, prompt: "Open in $EDITOR?" — open if user confirms.
+
+## Categorization rules (judgment calls)
+
+- **Urgent** = customer-facing security/prod issue, PR explicitly marked blocking, or @-mention from manager/PM.
+- **Review requested >24h** = 🔥. Means a teammate is waiting.
+- **DM from a known PM/manager** (e.g. @rubychilds for Feature Flags) = always surface, never collapse.
+- **EU yapping in your channels** = signal if it mentions FF topics, your name, or your PR numbers; otherwise summary only.
+- **Zendesk aging >7d** = surface but don't mark urgent unless customer-replied.
+
+## Configuration
+
+`~/dev/ai/notes/wake-me-up/channels.yml` (user-maintained) controls Slack channel weights:
+
+```yaml
+channels:
+  team-feature-flags: { weight: high, summarize_above: 1 }
+  posthog-eng:        { weight: med,  summarize_above: 10 }
+  general:            { weight: low,  summarize_above: 30 }
+  eng-announcements:  { weight: high, summarize_above: 0 }
+```
+
+If the file is missing, do step 5 against a default of `team-feature-flags` only and tell the user to create the file.
