@@ -75,7 +75,7 @@ For each of the user's monitored channels (read from `~/dev/ai/notes/wake-me-up/
 2. If the channel weight is `low` and the message count is below `summarize_above`, mark "(quiet)" and move on.
 3. Otherwise:
    - Summarize in 1–3 lines.
-   - Flag explicitly if any message mentions the user, mentions a feature flags topic (`feature flag`, `cohort`, `early access`, `flag eval`), or references one of the user's open PR numbers (from Step 3).
+   - Flag explicitly if any message mentions the user, mentions a feature flags topic (`feature flag`, `FF`, `cohort`, `early access`, `flag eval`), or references one of the user's open PR numbers (from Step 3).
 
 Then:
 - List unread DMs (sender + first-line preview).
@@ -83,7 +83,7 @@ Then:
 
 #### Watchlist (customer channels)
 
-If `channels.yml` defines a `watchlist:` block, also scan channels matching `channel_pattern` (e.g. `posthog-*` for customer engagement channels) for messages mentioning any of the `topics` (default: `feature flag`, `cohort`, `early access`, `flag eval`). Surface ONLY the hits — not a full channel summary. Format each hit as `#channel — {one-line preview} ({link})`.
+If `channels.yml` defines a `watchlist:` block, also scan channels matching `channel_pattern` (e.g. `posthog-*` for customer engagement channels) for messages mentioning any of the `topics` (default: `feature flag`, `FF`, `cohort`, `early access`, `flag eval`). Slack search is case-insensitive, so `FF` also catches `ff`. Surface ONLY the hits — not a full channel summary. Format each hit as `#channel — {one-line preview} ({link})`.
 
 The point: you don't have to maintain a list of customer channels (they come and go), but you still hear if a customer channel mentions your product area.
 
@@ -194,7 +194,7 @@ channels:
 # Useful for ephemeral customer/engagement channels (#posthog-*) that come and go.
 watchlist:
   channel_pattern: "posthog-*"
-  topics: ["feature flag", "cohort", "early access", "flag eval"]
+  topics: ["feature flag", "FF", "cohort", "early access", "flag eval"]
 
 # Optional: auto-post a condensed briefing to a personal channel for mobile access.
 morning_post_to: "#dylanthropy"
