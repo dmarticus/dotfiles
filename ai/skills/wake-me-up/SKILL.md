@@ -43,7 +43,11 @@ SINCE_EPOCH=$(date -j -f "%Y-%m-%dT%H:%M:%S%z" "$SINCE" "+%s")
 
 ### Step 2: Read carry-over from yesterday
 
-Find the most recent file in `~/dev/ai/notes/wake-me-up/` (excluding today's). If found, read it and extract any unchecked checklist items (`- [ ]`). These are carry-over.
+Find the most recent file in `~/dev/ai/notes/wake-me-up/` (excluding today's). If found, read it and extract unchecked checklist items (`- [ ]`).
+
+Then **filter out items that current state shows are resolved** — don't carry forward what's already done. Verify against the data gathered in Steps 3–6 (e.g., a "review #56521" item drops if #56521 is now merged/closed; a "create channels.yml" item drops if the file now exists; a "triage ticket #X" item drops if the ticket status moved). When in doubt, keep it.
+
+The principle: the carry-over list should only include things still genuinely open. The user shouldn't have to look at items they already finished.
 
 If no prior file exists, skip carry-over.
 
@@ -83,7 +87,15 @@ Then:
 
 #### Watchlist (customer channels)
 
-If `channels.yml` defines a `watchlist:` block, also scan channels matching `channel_pattern` (e.g. `posthog-*` for customer engagement channels) for messages mentioning any of the `topics` (default: `feature flag`, `FF`, `cohort`, `early access`, `flag eval`). Slack search is case-insensitive, so `FF` also catches `ff`. Surface ONLY the hits — not a full channel summary. Format each hit as `#channel — {one-line preview} ({link})`.
+If `channels.yml` defines a `watchlist:` block, scan for messages in channels matching `channel_pattern` that mention any of the `topics`.
+
+**Important — Slack search doesn't expand wildcards in `in:` filters.** `in:posthog-*` is treated literally and returns nothing. Use this pattern instead:
+
+1. For each topic (e.g. `"feature flag"`), run `slack_search_public_and_private` with the topic as the query and `after: SINCE`. Don't include `in:` at all.
+2. Filter the results by channel name in post-processing: keep only hits where the channel name matches `channel_pattern` (treat the pattern as a glob — `posthog-*` means "channel name starts with `posthog-`").
+3. Dedupe across topics (a message containing both "feature flag" and "cohort" should appear once).
+
+Slack search is case-insensitive, so `FF` also catches `ff`. Surface ONLY the hits — not a full channel summary. Format each hit as `#channel — {one-line preview} ({link})`.
 
 The point: you don't have to maintain a list of customer channels (they come and go), but you still hear if a customer channel mentions your product area.
 
@@ -107,9 +119,15 @@ Write to `$OUT_FILE` using this structure. Omit empty sections rather than showi
 PRs blocking your work. Each item: 1 line + link.}
 
 ## 🔄 Awaiting your review
-{PRs requested from you. Sort by age. PRs older than 24h get 🔥.}
-- 🔥 [#1234 Title](url) — by @author, requested 2d ago
-- [#1235 Title](url) — by @author, requested 4h ago
+{PRs requested from you. Group by author tier — teammates first (from `teammates:` in channels.yml), then everyone else. Within each group, sort by age. PRs older than 24h get 🔥. If a tier has no PRs, omit its subheading.}
+
+### From teammates
+- 🔥 [#1234 Title](url) — by @teammate, 2d
+- [#1235 Title](url) — by @teammate, 4h
+
+### From everyone else
+- 🔥 [#9876 Title](url) — by @rando, 12d
+- [#9877 Title](url) — by @rando, 6h
 
 ## 🛠️ Your work in flight
 {Your open PRs with status.}
@@ -190,7 +208,13 @@ channels:
   team-code:             { weight: low, summarize_above: 3 }
   papercuts:             { weight: low, summarize_above: 1 }
 
-# Watchlist: scan any channel matching the pattern for topic mentions.
+# Direct teammates — their PRs are sorted to the top of "Awaiting your review".
+# GitHub logins (case-sensitive).
+teammates:
+  - gustavohstrassburger
+  - haacked
+
+# Watchlist: scan for topic mentions, then filter by channel name pattern.
 # Useful for ephemeral customer/engagement channels (#posthog-*) that come and go.
 watchlist:
   channel_pattern: "posthog-*"
