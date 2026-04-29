@@ -109,13 +109,28 @@ Slack search is case-insensitive, so `FF` also catches `ff`. Surface ONLY the hi
 
 The point: you don't have to maintain a list of customer channels (they come and go), but you still hear if a customer channel mentions your product area.
 
-### Step 6: PostHog
+### Step 6: Apply relevance rules
+
+If `~/dev/ai/notes/wake-me-up/relevance.yml` exists, read it and apply its rules to filter and tier the items collected so far. The file uses **natural-language rules** under `keep` / `demote` / `hide` keys for each item type (`prs`, `zendesk`, `slack`). It also has a top-level `philosophy:` block that frames the overall standard.
+
+Apply rules with judgment, not regex. For each item gathered in Steps 3–5, ask: which rule does this fit best? When in doubt, follow the philosophy's guidance — typically "lean toward demote over keep, and hide over demote."
+
+Outcomes:
+- **hide**: drop the item entirely. Don't include it in the local file or the Slack post.
+- **demote**: include in the local file under "Below the fold", but exclude from the morning Slack post.
+- **keep**: full visibility — include in both the local file and the Slack post.
+
+The whole point: the morning Slack post should be a curated action list, not a comprehensive activity index. The user scans Slack/GitHub directly for general context.
+
+If `relevance.yml` doesn't exist, skip this step (no filtering beyond defaults from earlier steps).
+
+### Step 7: PostHog
 
 Stub for now. Output: `PostHog: no signals configured yet.`
 
 When ready, this step will fetch firing alerts, dashboards trending the wrong way, and saved insights with anomalies.
 
-### Step 7: Categorize and write report
+### Step 8: Categorize and write report
 
 Write to `$OUT_FILE` using this structure. Omit empty sections rather than showing them as empty.
 
@@ -166,7 +181,7 @@ PRs blocking your work. Each item: 1 line + link.}
 
 The briefing is for *informing*, not *prescribing*. Don't add a "Today's plan" section or propose tasks the user didn't ask for — surface what changed, what's open, and what's stale, and let the user decide what to do with it.
 
-### Step 8: Optional Slack post (when `morning_post_to:` is set)
+### Step 9: Optional Slack post (when `morning_post_to:` is set)
 
 If `channels.yml` has a `morning_post_to:` field (e.g. `#dylanthropy` for a personal channel), publish a condensed Slack-flavored version of the briefing there. Skip this step silently if the field is missing or the Slack MCP isn't connected.
 
@@ -182,9 +197,9 @@ Use `<url|text>` link syntax. No AI/LLM attribution. Post directly with `slack_s
 
 If posting fails, surface the error but don't fail the whole skill — the local file is still the source of truth.
 
-### Step 9: Show and open
+### Step 10: Show and open
 
-Print the report path (and the Slack message link if Step 8 ran). If `$EDITOR` is set, prompt: "Open in $EDITOR?" — open if user confirms.
+Print the report path (and the Slack message link if Step 9 ran). If `$EDITOR` is set, prompt: "Open in $EDITOR?" — open if user confirms.
 
 ## Categorization rules (judgment calls)
 
@@ -232,4 +247,4 @@ wrap_up:
   post_to: "#team-feature-flags"
 ```
 
-If the file is missing, do step 5 against a default of `team-feature-flags` only, skip the watchlist and step 8, and tell the user to create the file.
+If the file is missing, do step 5 against a default of `team-feature-flags` only, skip the watchlist and step 9, and tell the user to create the file.
