@@ -195,11 +195,45 @@ If `channels.yml` has a `morning_post_to:` field (e.g. `#dylanthropy` for a pers
 
 Compose a short post — not the whole markdown file. Slack mrkdwn won't render headers cleanly, and the file path is useless from a phone. Aim for 8–15 lines total:
 
-- Lead with `*Start of day — {date}*` (mrkdwn bold).
-- Top 3 urgent / blocker items, one line each. Skip if none. **Hyperlink the source artifact** (Slack thread, ticket URL, GitHub issue) so it's tappable on mobile — never just the channel name. For a Slack-originated item, link to the actual message permalink, not the channel.
-- Review queue: list **all** PRs that pass the "needs my input" filter (Step 3), grouped by tier (teammates first, then others), one terse line each — `🔥 <url|#NNNN> @author — short description`. Don't truncate with "…and N more". End the section with a link to the GitHub review queue (`<https://github.com/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me|all review-requested PRs →>`) as a stable shortcut.
+- Lead with `**Start of day — {date}**`. Just the date — no parentheticals, disclaimers, or "(re-render with X applied)" suffixes. The post should look the same every time at a glance.
+- Section order: Slack → Review requests → Your work → Ops (omit if empty).
+- **Spacing**: Slack collapses whitespace, but it does respect blank lines between paragraphs. Insert a blank line between every section AND between a section header and its content. Slack still squeezes things tight, but blank lines give the eye somewhere to rest. Don't run a section header directly into the previous list.
+- **Hyperlink the source artifact** (Slack thread permalink, ticket URL, GitHub issue) so everything is tappable on mobile — never just the channel name. For Slack-originated items, link the message permalink, not the channel.
+- Review queue: list **all** PRs that pass the "needs my input" filter (Step 3), grouped by tier (teammates first, then others), one terse line each — `🔥 [#NNNN](url) @author — short description`. Don't truncate with "…and N more". End the section with a link to the GitHub review queue.
 
 Don't include a "Today's plan" or proposed-action section. Don't include the local file path either — it's useless on mobile and adds noise. Surface info, don't prescribe.
+
+Concrete shape:
+
+```
+**Start of day — {date}**
+
+💬 **Slack**
+
+• {item}
+• {item}
+
+🔍 **Review requests** — N needing your input
+
+**Teammates:**
+• 🔥 [#X](url) @author — desc
+
+**Others:**
+• 🔥 [#Y](url) @author — desc
+
+[all review-requested →](url)
+
+🚀 **Your work**
+
+**In progress:**
+• [#Z](url) — title
+
+**Open PRs (N):**
+• 🆕 [#W](url) — title (created today)
+• {rest}
+
+[all my PRs →](url)
+```
 
 Use `<url|text>` link syntax. No AI/LLM attribution. Post directly with `slack_send_message` — no confirmation prompt for the morning post (the user opted in via config).
 
