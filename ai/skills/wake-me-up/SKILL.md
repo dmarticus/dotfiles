@@ -149,18 +149,12 @@ PRs blocking your work. Each item: 1 line + link.}
 - **@-mentions**: 1 — {link, context}
 
 ## 📋 Carry-over from yesterday
-{Unchecked items from previous wake-me-up file.}
+{Unchecked items from previous wake-me-up file, after auto-skip pass (Step 2).}
 - [ ] Finish migration plan for X
 - [ ] Reply to gustavo's thread
-
-## 📝 Today's plan
-{Empty checklist for the user to fill in. Include the most likely candidates
-inferred from the above as suggestions, prefixed with `-`. Final commitment is
-the user's call.}
-- [ ] {suggested item 1}
-- [ ] {suggested item 2}
-- [ ]
 ```
+
+The briefing is for *informing*, not *prescribing*. Don't add a "Today's plan" section or propose tasks the user didn't ask for — surface what changed, what's open, and what's stale, and let the user decide what to do with it.
 
 ### Step 8: Optional Slack post (when `morning_post_to:` is set)
 
@@ -171,8 +165,9 @@ Compose a short post — not the whole markdown file. Slack mrkdwn won't render 
 - Lead with `*Start of day — {date}*` (mrkdwn bold).
 - Top 3 urgent / blocker items, one line each. Skip if none.
 - Review queue: list **all** PRs grouped by tier (teammates first, then others), one terse line each — `🔥 <url|#NNNN> @author — short description`. Don't truncate with "…and N more"; the user wants every PR visible. End the section with a link to the GitHub review queue (`<https://github.com/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me|all review-requested PRs →>`) as a stable shortcut.
-- Today's plan as a checklist (use `•` not `- [ ]` since Slack doesn't render markdown checkboxes).
 - Final line: `full briefing: ~/dev/ai/notes/wake-me-up/{date}.md` (acts as a reminder that the local file has the full picture).
+
+Don't include a "Today's plan" or proposed-action section in the Slack post. Surface info, don't prescribe.
 
 Use `<url|text>` link syntax. No AI/LLM attribution. Post directly with `slack_send_message` — no confirmation prompt for the morning post (the user opted in via config).
 
