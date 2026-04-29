@@ -57,7 +57,9 @@ If no prior file exists, skip carry-over.
 ~/.claude/skills/wake-me-up/scripts/github-attention.sh --since "$SINCE"
 ```
 
-Output is JSON with three arrays: `review_requested`, `my_open_prs` (each PR includes `checks_state`), and `mentions`.
+Output is JSON with three arrays: `review_requested` (each PR includes `review_decision`), `my_open_prs` (each PR includes `checks_state`), and `mentions`.
+
+**Filter `review_requested` before surfacing.** Only show PRs where `review_decision == "REVIEW_REQUIRED"` (or null/missing — same meaning). Drop PRs with `review_decision` of `APPROVED` or `CHANGES_REQUESTED` — those already have substantive feedback from someone else and don't need the user's input to ship. The briefing exists to surface what genuinely needs the user; it should not show PRs other people are already owning.
 
 ### Step 4: Zendesk
 
@@ -66,6 +68,14 @@ Output is JSON with three arrays: `review_requested`, `my_open_prs` (each PR inc
 ```
 
 Output is JSON with: `new_tickets`, `customer_replied` (tickets where the most recent comment is from the customer), `aging` (tickets open >7 days with no internal reply).
+
+**Surface only tickets that are escalated or stuck — not routine `pending`.** Specifically:
+- Tickets with `priority` of `urgent` or `high`.
+- Tickets explicitly tagged as escalated (e.g. `escalated`, `vip`, `breaking`) or whose subject describes a customer-stated breaking issue.
+- Tickets in `customer_replied` (the ball is in our court).
+- Tickets in `aging` (open >7d) where the customer is the most recent commenter.
+
+Do NOT include tickets in `pending` status by default — those are with someone else and the user doesn't need to be paged on them. Same for the wave of auto-filed `Bug Report: …` tickets in `new` status; treat them as a count-only summary unless one is flagged urgent.
 
 If the script reports it's not configured, include a short note in the report ("Zendesk: not configured — see scripts/zendesk-flags.sh") and continue.
 
@@ -163,11 +173,10 @@ If `channels.yml` has a `morning_post_to:` field (e.g. `#dylanthropy` for a pers
 Compose a short post — not the whole markdown file. Slack mrkdwn won't render headers cleanly, and the file path is useless from a phone. Aim for 8–15 lines total:
 
 - Lead with `*Start of day — {date}*` (mrkdwn bold).
-- Top 3 urgent / blocker items, one line each. Skip if none.
-- Review queue: list **all** PRs grouped by tier (teammates first, then others), one terse line each — `🔥 <url|#NNNN> @author — short description`. Don't truncate with "…and N more"; the user wants every PR visible. End the section with a link to the GitHub review queue (`<https://github.com/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me|all review-requested PRs →>`) as a stable shortcut.
-- Final line: `full briefing: ~/dev/ai/notes/wake-me-up/{date}.md` (acts as a reminder that the local file has the full picture).
+- Top 3 urgent / blocker items, one line each. Skip if none. **Hyperlink the source artifact** (Slack thread, ticket URL, GitHub issue) so it's tappable on mobile — never just the channel name. For a Slack-originated item, link to the actual message permalink, not the channel.
+- Review queue: list **all** PRs that pass the "needs my input" filter (Step 3), grouped by tier (teammates first, then others), one terse line each — `🔥 <url|#NNNN> @author — short description`. Don't truncate with "…and N more". End the section with a link to the GitHub review queue (`<https://github.com/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me|all review-requested PRs →>`) as a stable shortcut.
 
-Don't include a "Today's plan" or proposed-action section in the Slack post. Surface info, don't prescribe.
+Don't include a "Today's plan" or proposed-action section. Don't include the local file path either — it's useless on mobile and adds noise. Surface info, don't prescribe.
 
 Use `<url|text>` link syntax. No AI/LLM attribution. Post directly with `slack_send_message` — no confirmation prompt for the morning post (the user opted in via config).
 

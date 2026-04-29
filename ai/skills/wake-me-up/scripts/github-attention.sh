@@ -16,11 +16,21 @@ done
 
 USER_LOGIN=$(gh api user --jq '.login')
 
-review_requested=$(
+review_requested_raw=$(
     gh search prs --review-requested "@me" --state open \
         --json number,title,url,author,createdAt,updatedAt,repository \
         --limit 50
 )
+
+# Annotate each review-requested PR with reviewDecision so the briefing can
+# filter to PRs that genuinely need this user's input (REVIEW_REQUIRED) and
+# drop ones already approved or blocked by other reviewers.
+review_requested=$(echo "$review_requested_raw" | jq -c '.[]' | while read -r pr; do
+    repo=$(echo "$pr" | jq -r '.repository.nameWithOwner')
+    number=$(echo "$pr" | jq -r '.number')
+    decision=$(gh pr view "$number" --repo "$repo" --json reviewDecision --jq '.reviewDecision // "REVIEW_REQUIRED"' 2>/dev/null || echo "REVIEW_REQUIRED")
+    echo "$pr" | jq --arg d "$decision" '. + {review_decision: $d}'
+done | jq -s '.')
 
 my_open_prs_raw=$(
     gh search prs --author "@me" --state open \
