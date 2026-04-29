@@ -170,7 +170,7 @@ Compose a short post — not the whole markdown file. Slack mrkdwn won't render 
 
 - Lead with `*Start of day — {date}*` (mrkdwn bold).
 - Top 3 urgent / blocker items, one line each. Skip if none.
-- Review queue: just the 🔥 PRs (>24h old). Cap at 5; if more, end with `…and N more`.
+- Review queue: list **all** PRs grouped by tier (teammates first, then others), one terse line each — `🔥 <url|#NNNN> @author — short description`. Don't truncate with "…and N more"; the user wants every PR visible. End the section with a link to the GitHub review queue (`<https://github.com/pulls?q=is%3Aopen+is%3Apr+review-requested%3A%40me|all review-requested PRs →>`) as a stable shortcut.
 - Today's plan as a checklist (use `•` not `- [ ]` since Slack doesn't render markdown checkboxes).
 - Final line: `full briefing: ~/dev/ai/notes/wake-me-up/{date}.md` (acts as a reminder that the local file has the full picture).
 
