@@ -146,8 +146,36 @@ Infrastructure repos:
 ## Style
 
 - Use actual ellipsis (…) instead of three dots (...) in user-facing messages.
-- Comments: concise prose with proper grammar. Comment only on what isn't obvious to a skilled reader.
 - Describe final state, not the journey. Comments, commit messages, and PR descriptions say what the code does now — not what it replaced. Write "Uses a LEFT JOIN to fetch users with their orders", not "Combined two queries into one LEFT JOIN".
+
+### Comments
+
+Be extremely sparing with comments — following principles from "Clean Code" by Uncle Bob. If you need comments, your code isn't clean enough; good code is self-documenting through clear naming and structure. When you do write a comment, use concise prose with proper grammar, and comment only on what isn't obvious to a skilled reader.
+
+Only add a comment to:
+
+- Explain **WHY** something is done, when the reason is non-obvious
+- Warn about consequences or side effects
+- Satisfy legal requirements or attributions
+
+Never add comments that:
+
+- Explain **WHAT** the code does — that should be obvious from the code itself
+- Restate what the docstring or function name already says
+
+Examples of bad comments:
+
+- `// Create a customer` before `create_customer()`
+- `// Set email to None` before `email = None`
+- `// Get units from product config instead of hardcoding` in a function with docstring "Map usage key to units"
+- `// Use first matching product key` before `product = config.get(product_keys[0])`
+- `// Fallback to generic "units" if not found` before `return "units"`
+
+Examples of good comments:
+
+- `// Vercel handles all customer communications - we use a dummy email to satisfy Stripe API requirements`
+- `// HACK: Workaround for Django bug #12345 - remove when fixed in 5.0`
+- `// We must check this BEFORE sending to Stripe to avoid double-charging`
 
 ## Test Instructions
 
