@@ -40,7 +40,7 @@ If `git status` shows a clean working tree with nothing staged, tell the user th
 
 **Format:**
 
-```
+```text
 <imperative subject line, ≤72 characters>
 
 [optional body — include only when the subject alone does not tell a reader
@@ -67,7 +67,7 @@ If `force` is true, skip to Step 4 immediately — do not show a preview or ask 
 
 Otherwise, display the proposed commit exactly as shown below, then stop and wait for the user to reply:
 
-```
+```text
 Files to commit:
   staged:    <list, or "(none)">
   unstaged:  <list, or "(none)">

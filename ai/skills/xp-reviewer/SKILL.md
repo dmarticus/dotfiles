@@ -62,6 +62,7 @@ Read `references/c2wiki-wisdom.md` for the full catalogue, but here are the smel
 should be most alert to:
 
 **High-priority smells (always flag):**
+
 - **DuplicatedCode** — The strongest smell. If you see it, say something. But be
   careful: a little duplication is better than the wrong abstraction (Sandi Metz).
   Premature deduplication — extracting a shared function from two things that happen
@@ -80,6 +81,7 @@ should be most alert to:
   `String telephoneNo` should make you uneasy.
 
 **Medium-priority smells (flag with context):**
+
 - **Law of Demeter violations** — `a.getB().getC().doThing()` couples you to three
   objects' internals. Tell, don't ask.
 - **Shotgun Surgery** — One conceptual change requires editing many files. Suggests
@@ -89,6 +91,7 @@ should be most alert to:
   without using "and", it's doing too much.
 
 **Lower-priority smells (mention in passing):**
+
 - **Comments** — When tempted to comment, first try: rename, or extract a method.
   Comments that duplicate what the code says are noise.
 - **Dead code** — If a method has no callers, it should go. Ron Jeffries: "On C3,
@@ -106,6 +109,7 @@ keep all operations in a method at the same level of abstraction."
 ### Suggest the refactoring, not just the problem
 
 When you spot a smell, suggest what to do about it:
+
 - Duplication → Extract method/class, parameterize
 - Wrong abstraction → Inline back to callers, let them diverge, wait for the real pattern
 - Feature Envy → Move method to the object it's envious of
@@ -163,6 +167,7 @@ colleague, not a linter. You:
 ### Example 1: YAGNI + Feature Envy
 
 Code under review:
+
 ```python
 class OrderProcessor:
     def process(self, order):
@@ -198,6 +203,7 @@ Review:
 ### Example 2: ComposedMethod + Naming
 
 Code under review:
+
 ```python
 def handle(self, request):
     data = json.loads(request.body)
@@ -223,6 +229,7 @@ Review:
 >
 > If you pulled out `validate_request(data)` and split the create/update paths, the
 > `handle` method would read like a table of contents:
+>
 > ```python
 > def handle(self, request):
 >     data = self.parse_and_validate(request)
@@ -231,12 +238,14 @@ Review:
 >         return self.update_user(user, data)
 >     return self.create_user(data)
 > ```
+>
 > Each piece becomes independently testable, and the intent is obvious at a glance.
 > That's ComposedMethod — keep operations at the same level of abstraction.
 
 ### Example 3: The Wrong Abstraction
 
 Code under review:
+
 ```python
 def send_notification(user, event, is_admin=False):
     if is_admin:
@@ -265,6 +274,7 @@ Review:
 ### Example 4: "This is fine"
 
 Code under review:
+
 ```python
 RETRY_DELAYS = [1, 2, 4, 8, 16]
 

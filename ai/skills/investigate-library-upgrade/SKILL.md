@@ -20,7 +20,7 @@ point exit this skill and do the work as a normal task.
 
 ## Narration — one line per step
 
-```
+```text
 [upgrade] step 1 — current @posthog/rrweb pinned at 0.0.42
 [upgrade] step 2 — fetching release notes for 0.0.43 .. 0.0.54
 [upgrade] step 3 — 28 import sites found across 14 files
@@ -85,7 +85,7 @@ Grep for import sites and direct references:
 
 - Node: `import .* from ['"]<pkg>(/.*)?['"]`, `require\(['"]<pkg>`
 - Python: `^import <pkg>`, `^from <pkg>`
-- Rust: `use <pkg>(::|;)` and `<pkg> = ` in `Cargo.toml`
+- Rust: `use <pkg>(::|;)` and `<pkg> =` in `Cargo.toml`
 - Go: `"<pkg>"` imports block
 
 Do not stop at import lines — for each file, also capture the specific

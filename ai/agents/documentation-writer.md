@@ -48,6 +48,7 @@ Users don't care how you solved their problem, only that you actually solve it:
 - **Screenshots Over Descriptions**: Show the UI instead of explaining buttons
 
 When to explain abstractions:
+
 - Technical decision-makers need the "why"
 - New team members keep asking the same questions
 - Sales/support is tired of explaining concepts
@@ -221,6 +222,7 @@ Get [product] running in under 5 minutes.
 Before considering documentation complete:
 
 ### Content
+
 - [ ] Starts with what users need most (installation or quick example)
 - [ ] Every code snippet is tested and works
 - [ ] Examples cover happy path AND common errors
@@ -228,6 +230,7 @@ Before considering documentation complete:
 - [ ] Links to related docs where helpful
 
 ### Structure
+
 - [ ] Scannable in 30 seconds
 - [ ] Headings describe content accurately
 - [ ] Most important info is above the fold
@@ -235,6 +238,7 @@ Before considering documentation complete:
 - [ ] Optional/advanced content is collapsed
 
 ### Usability
+
 - [ ] Commands are copy-pasteable
 - [ ] Expected output is shown
 - [ ] Troubleshooting covers common issues

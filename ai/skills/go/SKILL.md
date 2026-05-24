@@ -62,7 +62,7 @@ If a plan was found, read it with the Read tool, briefly tell the user which pla
 
 Otherwise spawn the planner as a sub-agent so its research stays out of the main context:
 
-```
+```text
 Agent tool with:
   subagent_type: implementation-planner
   description: "Plan: $SLUG"
@@ -93,7 +93,7 @@ Then commit. Use a message that matches the situation:
 - If Step 3 produced a fresh implementation: `"Initial implementation: $SLUG"`
 - If `CONTINUING=true` from Step 1: `"Continue work on $SLUG"`
 
-```
+```text
 Skill("commit", args: "--force <message>")
 ```
 
@@ -109,7 +109,7 @@ gh pr list --head "$(git branch --show-current)" --json number --jq '.[0].number
 
 If the output is non-empty, a PR already exists — leave it alone and move on. If the output is empty, open one as a draft:
 
-```
+```text
 Skill("create-pr", args: "--force --draft")
 ```
 

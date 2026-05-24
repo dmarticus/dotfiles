@@ -61,7 +61,7 @@ Format: `[shepherd] <step> — <what and why>`
 
 Examples:
 
-```
+```text
 [shepherd] step 1 — resolving PR from gh pr view
 [shepherd] step 2 — diff since a1b2c3d touches src/foo.ts, running qa-swarm
 [shepherd] step 2 — skip qa-swarm, only doc-only changes since a1b2c3d
@@ -386,7 +386,7 @@ If `stamphog_applied_for_sha == HEAD_SHA`, skip — already stamped.
 Print a one-line **summary** of the iteration (on top of the per-step
 narration from earlier):
 
-```
+```text
 [shepherd] iter done — sha=<short_sha> qa-swarm=<ran|skip> resolved=<n> actioned=<n> deferred=<n> ci=<pass|pending|fail> stamphog=<applied|already|waiting|dismissed|re-requested>
 ```
 

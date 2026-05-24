@@ -134,7 +134,7 @@ Update the `status` frontmatter field as the postmortem progresses:
 
 When displaying postmortem status, show title, status/severity/duration, file path, and per-section completion. For example:
 
-```
+```text
 Postmortem: {title}
 Status: {status} | Severity: {severity} | Duration: {duration}
 Path: {path}

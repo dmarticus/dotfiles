@@ -23,7 +23,7 @@ review comment has been triaged, it calls `pr-shepherd` and exits.
 
 Emit a short line before each step so the user can follow progress:
 
-```
+```text
 [takeover] step 1 — resolving PR #53004
 [takeover] step 2 — branch is BEHIND master by 142 commits, restacking via graphite
 [takeover] step 3 — 4 unresolved review threads, 1 actionable, 2 nit, 1 ambiguous
@@ -128,7 +128,7 @@ At this point:
 
 Print a short handoff summary:
 
-```
+```text
 [takeover] complete — sha=<short_sha> resolved=<n> replied=<n> deferred=<n>
 [takeover] handing off to pr-shepherd to run the active review loop
 ```
@@ -151,7 +151,7 @@ resolved, threads deferred, reason for stopping.
 
 ## Final summary format
 
-```
+```text
 [takeover] done
   branch:   <branch> @ <short_sha>
   rebased:  <yes|no|conflicts>

@@ -63,18 +63,22 @@ Read the following files. If any skill's files are missing, warn the user and
 skip that reviewer — the others still run.
 
 **qa-team** (try these paths in order, stop at first hit):
+
 1. `<repo_root>/.agents/skills/qa-team/SKILL.md` (use `git rev-parse --show-toplevel`)
 2. `~/github.com/PostHog/posthog/.agents/skills/qa-team/SKILL.md`
 
 If found, also read from the same directory:
+
 - `references/personas.md`
 - `references/incident-patterns.md`
 
 **paul-reviewer:**
+
 - `~/.claude/skills/paul-reviewer/SKILL.md`
 - `~/.claude/skills/paul-reviewer/references/real-review-examples.md`
 
 **xp-reviewer:**
+
 - `~/.claude/skills/xp-reviewer/SKILL.md`
 - `~/.claude/skills/xp-reviewer/c2wiki-wisdom.md`
 
@@ -113,7 +117,7 @@ return structured findings with `reviewer: xp`.
 
 Every agent must end its response with findings in this exact format:
 
-```
+```text
 STRUCTURED_FINDINGS:
 - file: <path> | line: <number or "general"> | severity: <CRITICAL|HIGH|MEDIUM|LOW|NIT> | reviewer: <tag> | body: <the review comment text>
 - file: <path> | line: <number or "general"> | severity: <CRITICAL|HIGH|MEDIUM|LOW|NIT> | reviewer: <tag> | body: <the review comment text>
@@ -125,7 +129,7 @@ OVERALL_SUMMARY:
 
 If an agent has no findings, it returns:
 
-```
+```text
 STRUCTURED_FINDINGS:
 (none)
 
@@ -142,12 +146,14 @@ lines) or clearly the same concern, merge them into a single finding. Note the
 convergence — convergent findings carry higher confidence.
 
 **Verdict** (using qa-team risk scoring if the qa-team agent ran):
+
 - CRITICAL: Any CRITICAL finding → overall CRITICAL
 - HIGH: 2+ HIGH findings, or 1 HIGH + 2 MEDIUM → overall HIGH
 - MEDIUM: 1 HIGH, or 3+ MEDIUM → overall MEDIUM
 - LOW: Only LOW/NIT/none → overall LOW
 
 Map to verdict:
+
 - ✅ **APPROVE** — LOW, no actionable findings
 - 💬 **APPROVE WITH NITS** — MEDIUM, minor suggestions
 - ⚠️ **REQUEST CHANGES** — HIGH, fixes needed before merge

@@ -7,9 +7,10 @@ Read this when you need to deepen a review comment with the *why* behind an XP p
 or when you want to cite the original thinking.
 
 ## Table of Contents
+
 1. [Simplicity & YAGNI](#simplicity--yagni)
 2. [Code Smells](#code-smells)
-3. [OnceAndOnlyOnce](#onceandOnlyonce)
+3. [OnceAndOnlyOnce](#onceandonlyonce)
 4. [Refactoring](#refactoring)
 5. [Composed Method & Naming](#composed-method--naming)
 6. [Tell Don't Ask & Law of Demeter](#tell-dont-ask--law-of-demeter)
@@ -25,6 +26,7 @@ or when you want to cite the original thinking.
 ### The Four Rules of Simple Design (XpSimplicityRules)
 
 Simple code, in priority order:
+
 1. Passes all the tests
 2. Expresses every idea that we need to express
 3. Says everything OnceAndOnlyOnce
@@ -53,6 +55,7 @@ am overwhelmed by my fears of not being good enough for today's task. Solving to
 problem is an excellent avoidance strategy, because you can't be proven wrong."
 
 YAGNI works because other XP practices back you up:
+
 - CollectiveCodeOwnership: you can change anybody's code later
 - RefactorMercilessly + OnceAndOnlyOnce: makes it easier to add functionality later
 - UnitTests: ensure added functionality won't break past functionality
@@ -84,6 +87,7 @@ a smell is not an attack — it's a sign that a closer look is warranted.
 ### Key smells to watch for in review
 
 **Too much code — take something off the stove:**
+
 - DuplicatedCode (the strongest smell)
 - Methods too big (see ComposedMethod)
 - Classes with too many instance variables
@@ -93,11 +97,13 @@ a smell is not an attack — it's a sign that a closer look is warranted.
 - Code not actually ever used (YouDontNeedItAnymore)
 
 **Not enough code — half-baked:**
+
 - Classes with too few instance variables or too little code
 - Empty catch clauses
 - Explicitly setting variables to null everywhere
 
 **Structural smells:**
+
 - FeatureEnvy — many messages to the same object from the same method (MoveMethod)
 - LawOfDemeter violations — messages to the results of messages
 - ShotgunSurgery — same rate of change in different, disconnected objects
@@ -139,6 +145,7 @@ acting on duplication before you understand why things look similar — is itsel
 ### ThreeStrikesAndYouRefactor
 
 From Fowler's Refactoring book:
+
 - The first time you do something, you just do it.
 - The second time you do something similar, you wince at the duplication, but do it anyway.
 - The third time you do something similar, you refactor.
@@ -181,6 +188,7 @@ that's probably two methods.
 
 Name things so well that comments become unnecessary. When you're tempted to write a
 comment, first try:
+
 - Rename the variable/method to express the intent
 - Extract a method with a name that says what it does
 
@@ -210,6 +218,7 @@ have a coupling problem.
 ## Test-Driven Development
 
 When you code, alternate these activities:
+
 1. Add a test, get it to fail, and write code to pass the test
 2. Remove duplication (OnceAndOnlyOnce, ThreeStrikesAndYouRefactor)
 
@@ -227,6 +236,7 @@ happens in TDD — not up front, but as a natural consequence of eliminating dup
 ## Technical Debt
 
 During planning or execution, decisions are made to defer necessary work:
+
 - It's too late to upgrade to the new compiler release
 - We're not completely conforming to the interface guidelines
 - We don't have time to refactor the widget code

@@ -59,6 +59,7 @@ If no prior file exists, skip carry-over.
 ```
 
 Output JSON has four arrays:
+
 - `review_requested` — each PR includes `review_decision`
 - `my_open_prs` — each PR includes `checks_state`
 - `mentions`
@@ -77,6 +78,7 @@ Output JSON has four arrays:
 Output is JSON with: `new_tickets`, `customer_replied` (tickets where the most recent comment is from the customer), `aging` (tickets open >7 days with no internal reply).
 
 **Surface only tickets that are escalated or stuck — not routine `pending`.** Specifically:
+
 - Tickets with `priority` of `urgent` or `high`.
 - Tickets explicitly tagged as escalated (e.g. `escalated`, `vip`, `breaking`) or whose subject describes a customer-stated breaking issue.
 - Tickets in `customer_replied` (the ball is in our court).
@@ -99,6 +101,7 @@ For each of the user's monitored channels (read from `~/dev/ai/notes/wake-me-up/
    - Flag explicitly if any message mentions the user, mentions a feature flags topic (`feature flag`, `FF`, `cohort`, `early access`, `flag eval`), or references one of the user's open PR numbers (from Step 3).
 
 Then:
+
 - List unread DMs (sender + first-line preview).
 - List @-mentions in threads with link.
 
@@ -123,6 +126,7 @@ If `~/dev/ai/notes/wake-me-up/relevance.yml` exists, read it and apply its rules
 Apply rules with judgment, not regex. For each item gathered in Steps 3–5, ask: which rule does this fit best? When in doubt, follow the philosophy's guidance — typically "lean toward demote over keep, and hide over demote."
 
 Outcomes:
+
 - **hide**: drop the item entirely. Don't include it in the local file or the Slack post.
 - **demote**: include in the local file under "Below the fold", but exclude from the morning Slack post.
 - **keep**: full visibility — include in both the local file and the Slack post.
@@ -205,7 +209,7 @@ Don't include a "Today's plan" or proposed-action section. Don't include the loc
 
 Concrete shape:
 
-```
+```text
 **Start of day — {date}**
 
 💬 **Slack**

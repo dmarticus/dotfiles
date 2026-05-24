@@ -14,11 +14,13 @@ duration: "{DURATION}"
 <!-- One paragraph describing what happened, impact, and resolution -->
 
 **Impact:**
+
 - Users affected:
 - Duration:
 - Services impacted:
 
 **Timeline Overview:**
+
 | Time | Event |
 |------|-------|
 | {START_TIME} | Incident began |

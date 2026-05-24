@@ -37,7 +37,6 @@ Unless told otherwise, use these objectives for the Feature Flags team:
 8. First-class external cache SDK support
 9. Better debuggability
 
-
 ## Support Hero Shifts
 
 Sprints are two weeks. Support hero shifts are one week. Each sprint has two support heroes, one per week. Calculate the shift dates from the sprint start date:
@@ -331,6 +330,8 @@ EOF
 
 After posting the comment (or if the user declines to post), offer to clean up the project board by archiving Done items from previous sprints.
 
+<!-- markdownlint-disable MD029 -->
+
 1. Run the helper script to find archivable items:
 
 ```bash
@@ -351,6 +352,8 @@ After posting the comment (or if the user declines to post), offer to clean up t
 gh project item-archive 170 --owner PostHog --id <item-id>
 ```
 
+<!-- markdownlint-enable MD029 -->
+
 ## Goals Workflow
 
 These steps apply when the `goals` argument is provided. They run independently of the main sprint planning workflow.
@@ -369,6 +372,8 @@ This user's section is highlighted in the output. If the API call fails, fall ba
 
 ### Step G3: Fetch Current Sprint Plan
 
+<!-- markdownlint-disable MD029 -->
+
 1. Detect the current sprint using Step 1 (Detect Sprint Context) from the main workflow.
 
 2. Fetch the team's comment from the current sprint issue:
@@ -380,6 +385,8 @@ This user's section is highlighted in the output. If the API call fails, fall ba
 3. If the result is "NOT_FOUND", skip this step (no sprint plan exists yet). The output will rely solely on board data from Step G4.
 
 4. If a comment is found, parse the **Plan** section to extract each team member's planned items. Each item may be plain text or a `[title](url)` link.
+
+<!-- markdownlint-enable MD029 -->
 
 ### Step G4: Fetch Board Goals
 

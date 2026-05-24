@@ -37,7 +37,7 @@ For each item, capture: identifier (PR #, ticket #, message permalink), author/s
 
 Present items one at a time, in this format:
 
-```
+```text
 N/TOTAL
 
 [#1234](url) — @author, 5d, "Title goes here"
@@ -62,7 +62,7 @@ Don't push too hard — the user said "1-by-1" for a reason. Only batch when the
 
 After the round, group decisions and propose natural-language rules:
 
-```
+```text
 Proposed rules from this session:
 
 # prs / hide

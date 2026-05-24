@@ -36,6 +36,7 @@ Monitor GitHub CI checks for the current PR, wait for completion, classify failu
 Extract the PR identifier and flags from `$ARGUMENTS`.
 
 **Flags to detect:**
+
 - `--no-fix` - Set `NO_FIX=true`
 - `--timeout <N>` - Set `TIMEOUT_MINUTES=N` (default: 30)
 
@@ -106,6 +107,7 @@ If the check has a `run_id`:
 Save as `LOG_DATA`.
 
 If the check does **not** have a `run_id` (e.g., a non-GitHub Actions status check):
+
 - Mark it as `uncertain` — no logs are available to classify it
 - Report the check name and link to the user
 - Do not attempt to classify, re-run via `gh run rerun`, or auto-fix this check
@@ -126,6 +128,7 @@ Save as `CLASSIFICATION`.
 **4c. Present findings to the user:**
 
 For each failure, report:
+
 - Check name and link
 - Classification: flaky / legit / uncertain
 - Confidence score
@@ -149,6 +152,7 @@ Then go back to **Step 2** to monitor the re-run (this does NOT count against `R
 **Uncertain classifications:** Present your own analysis of the log excerpt alongside the automated classification. Use your judgment to refine the classification before proceeding. Treat uncertain failures you judge to be legit the same as legit failures when building `LEGIT_FAILURES`.
 
 **Building `LEGIT_FAILURES`:** Before entering Step 5, construct an enriched array containing one entry per legit or uncertain failure. Each entry must include:
+
 - `check_name` — the check's name
 - `check_link` — the check's URL
 - `run_id` — the run ID (may be null for non-Actions checks)
@@ -164,7 +168,7 @@ Check `RETRY_COUNT`: if `>= MAX_RETRIES`, tell the user "Max fix retries (${MAX_
 
 Load the fix handler:
 
-```
+```text
 Read ~/.claude/skills/ci-monitor/handlers/fix.md
 ```
 

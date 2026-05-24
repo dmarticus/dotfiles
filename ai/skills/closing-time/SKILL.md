@@ -67,7 +67,7 @@ Cross-reference what the user just told you against `morning_items`. Bucket each
 
 Then draft the Slack post with this shape (parallel to wake-me-up's structure so it reads as a closing of the loop):
 
-```
+```text
 **End of day — {date}**
 
 ✅ **Done**

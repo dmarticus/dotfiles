@@ -89,7 +89,7 @@ Use an interactive rebase with a custom sequence editor that reorders the todo s
 
 Git passes the path to the todo file as `$1` to `GIT_SEQUENCE_EDITOR`. The file contains one line per commit in oldest-first order. Each line is:
 
-```
+```text
 <action> <short-hash> <subject>
 ```
 
@@ -98,13 +98,14 @@ The default action for every line is `pick`. To squash a commit into the one abo
 **What the reordered todo must look like:**
 
 Given a branch with (oldest → newest):
+
 - `abc1234` developer commit "Add login page"
 - `def5678` snapshot commit "Update snapshots"
 - `ghi9012` developer commit "Fix redirect"
 
 The default todo git produces is:
 
-```
+```text
 pick abc1234 Add login page
 pick def5678 Update snapshots
 pick ghi9012 Fix redirect
@@ -112,7 +113,7 @@ pick ghi9012 Fix redirect
 
 The reordered todo you must produce is:
 
-```
+```text
 pick abc1234 Add login page
 fixup ghi9012 Fix redirect
 pick def5678 Update snapshots
@@ -193,4 +194,5 @@ git log --oneline "$MERGE_BASE"..HEAD
 If any CI snapshot commits were preserved, list them:
 
 > The following CI snapshot commits were not squashed:
+>
 > - `<short-hash>` `<subject>`

@@ -57,6 +57,7 @@ Write as the user in all public-facing content — never refer to yourself as an
 **Always use `gh` CLI** for GitHub operations. Never use GitHub MCP server tools.
 
 **Never post PR review comments without explicit user approval.** Use correct endpoints:
+
 - Reply to review comment: `gh api repos/owner/repo/pulls/123/comments/456/replies --method POST`
 - New review comment: `gh pr review 123 --comment --body "comment"`
 - Root PR comment (rarely appropriate): `gh issue comment 123 --body "comment"`
@@ -90,6 +91,7 @@ PostHog runs behind load balancers and proxies. Always consider this for IP addr
 Common pitfalls: socket IP for rate limiting collapses to one bucket; for auth it's a security bypass; for geolocation everything appears from one location. Don't roll custom IP detection — use `tower_governor::key_extractor::SmartIpKeyExtractor` in Rust, or the equivalent "smart" extractor in other languages.
 
 Infrastructure repos:
+
 - `~/dev/posthog/posthog-cloud-infra` — Terraform/AWS (NLB, VPC)
 - `~/dev/posthog/charts` — Helm/K8s. Key files:
   - `argocd/contour/values/values.yaml` — `num-trusted-hops` config
@@ -102,22 +104,22 @@ Infrastructure repos:
 
 | Repository | Local Path | GitHub URL |
 |------------|------------|------------|
-| posthog-js, posthog-rn | `~/dev/posthog/posthog-js` | https://github.com/PostHog/posthog-js |
-| posthog-ios | `~/dev/posthog/posthog-ios` | https://github.com/PostHog/posthog-ios |
-| posthog-android | `~/dev/posthog/posthog-android` | https://github.com/PostHog/posthog-android |
-| posthog-flutter | `~/dev/posthog/posthog-flutter` | https://github.com/PostHog/posthog-flutter |
+| posthog-js, posthog-rn | `~/dev/posthog/posthog-js` | <https://github.com/PostHog/posthog-js> |
+| posthog-ios | `~/dev/posthog/posthog-ios` | <https://github.com/PostHog/posthog-ios> |
+| posthog-android | `~/dev/posthog/posthog-android` | <https://github.com/PostHog/posthog-android> |
+| posthog-flutter | `~/dev/posthog/posthog-flutter` | <https://github.com/PostHog/posthog-flutter> |
 
 #### Server-side
 
 | Repository | Local Path | GitHub URL |
 |------------|------------|------------|
-| posthog-python | `~/dev/posthog/posthog-python` | https://github.com/PostHog/posthog-python |
-| posthog-node | `~/dev/posthog/posthog-js` | https://github.com/PostHog/posthog-node |
-| posthog-php | `~/dev/posthog/posthog-php` | https://github.com/PostHog/posthog-php |
-| posthog-ruby | `~/dev/posthog/posthog-ruby` | https://github.com/PostHog/posthog-ruby |
-| posthog-go | `~/dev/posthog/posthog-go` | https://github.com/PostHog/posthog-go |
-| posthog-dotnet | `~/dev/posthog/posthog-dotnet` | https://github.com/PostHog/posthog-dotnet |
-| posthog-elixir | `~/dev/posthog/posthog-elixir` | https://github.com/PostHog/posthog-elixir |
+| posthog-python | `~/dev/posthog/posthog-python` | <https://github.com/PostHog/posthog-python> |
+| posthog-node | `~/dev/posthog/posthog-js` | <https://github.com/PostHog/posthog-node> |
+| posthog-php | `~/dev/posthog/posthog-php` | <https://github.com/PostHog/posthog-php> |
+| posthog-ruby | `~/dev/posthog/posthog-ruby` | <https://github.com/PostHog/posthog-ruby> |
+| posthog-go | `~/dev/posthog/posthog-go` | <https://github.com/PostHog/posthog-go> |
+| posthog-dotnet | `~/dev/posthog/posthog-dotnet` | <https://github.com/PostHog/posthog-dotnet> |
+| posthog-elixir | `~/dev/posthog/posthog-elixir` | <https://github.com/PostHog/posthog-elixir> |
 
 ## Coding
 
@@ -136,7 +138,7 @@ Infrastructure repos:
 ### Bash Scripts
 
 - Use `echo` for logging, not custom logging methods.
-- For warnings/errors, copy helpers from https://github.com/PostHog/template/tree/main/bin/helpers.
+- For warnings/errors, copy helpers from <https://github.com/PostHog/template/tree/main/bin/helpers>.
 
 ### Markdown Files
 

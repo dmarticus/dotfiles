@@ -20,6 +20,7 @@ Run one full review-fix-simplify-commit cycle. Designed to be invoked repeatedly
 ### Step 1: Parse Arguments
 
 Extract from `$ARGUMENTS`:
+
 - `--iteration N` (default to `1`)
 - Everything else is the review target
 
@@ -47,7 +48,7 @@ mkdir -p "$(git rev-parse --show-toplevel)/.notes"
 
 Invoke the review-code skill:
 
-```
+```text
 Skill("review-code", args: "--force --append $REVIEW_TARGET")
 ```
 
@@ -79,12 +80,14 @@ Findings are prefixed with code-formatted severity markers:
 **Categorize each finding:**
 
 **Fix** (always):
+
 - All `blocking` findings
 - `suggestion` findings that fix correctness, security, or clarity issues
 - `suggestion` findings with concrete code improvements that make the code simpler or cleaner
 - `nit` findings that are clearly correct and easy to apply
 
 **Skip** (only when):
+
 - The suggestion is factually wrong or based on a misunderstanding of the code
 - The suggestion is genuinely ambiguous and could go either way
 - The suggestion would make the code worse (more complex, less readable)
@@ -99,6 +102,7 @@ Count the findings: `$TOTAL_FINDINGS`, `$TO_FIX`, `$TO_SKIP`.
 Process findings in priority order: blocking first, then suggestions, then nits.
 
 For each actionable finding:
+
 1. Read the referenced file at the indicated line
 2. Apply the fix:
    - Use the concrete code fix from the review if one is provided (blocking and suggestion findings always include one)
@@ -111,7 +115,7 @@ For each skipped finding, note the title, reason, source, and file/line in memor
 
 Invoke the simplify skill to review the changes just made:
 
-```
+```text
 Skill("simplify")
 ```
 
@@ -121,7 +125,7 @@ Apply any improvements it suggests.
 
 Invoke the commit skill with force mode:
 
-```
+```text
 Skill("commit", args: "--force Address review feedback (iteration $N)")
 ```
 
@@ -164,12 +168,13 @@ Use the Write tool to create `$REPO_ROOT/.notes/review-cycle-status.json`:
 ```
 
 Where:
+
 - `clean` is `true` if zero actionable findings were found
 - `committed` is `true` if a commit was made (false if clean or all skipped)
 
 Report the iteration summary to the user:
 
-```
+```text
 Review-fix cycle iteration $N complete.
 Findings: $TOTAL_FINDINGS total, $TO_FIX fixed, $TO_SKIP skipped.
 Status: $STATUS

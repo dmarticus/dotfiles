@@ -59,7 +59,7 @@ Keep the full report under **200 words**. The orchestrator is synthesizing N rep
 
 Evidence bullets: one line each. Format as `<source>: <single number or pattern>`. No prose explanation — the number is the evidence.
 
-```
+```text
 **Hypothesis:** <restate in one line>
 **Verdict:** Confirmed | Rejected | Inconclusive
 **Confidence:** <0–100>
