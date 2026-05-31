@@ -52,8 +52,5 @@
 	editor = zed --wait
 [init]
 	defaultBranch = main
-[user]
-  name = Dylan Martin
-  email = dylan@posthog.com
 [gpg "ssh"]
 	program = /usr/bin/ssh-keygen
