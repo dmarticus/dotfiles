@@ -109,6 +109,7 @@ install yq
 install zed yes
 install zlib
 install zsh
+install zsh-autosuggestions
 install zsh-syntax-highlighting
 gh extension install seachicken/gh-poi
 

@@ -1,11 +1,7 @@
-# --- Oh My Zsh ---
+# --- Oh My Zsh (kept for plugins, NOT theme) ---
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="agnoster"
-
-# Agnoster theme customization - make context segment readable
-export AGNOSTER_CONTEXT_FG="black"
-export AGNOSTER_CONTEXT_BG="cyan"
-plugins=(git zsh-autosuggestions)
+ZSH_THEME=""              # empty — starship handles the prompt
+plugins=(git)
 source "$ZSH/oh-my-zsh.sh"
 
 # --- Editor ---
@@ -14,7 +10,7 @@ export VISUAL="zed --wait"
 
 # --- Secrets (never committed) ---
 if [ -f "$HOME/.secrets" ]; then
-  . "$HOME/.secrets"
+. "$HOME/.secrets"
 fi
 
 # --- Build environment ---
@@ -39,8 +35,8 @@ export NVM_DIR="$HOME/.nvm"
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
 # bun
@@ -66,42 +62,42 @@ export PATH="$PATH:$HOME/.local/bin"
 
 # Go
 if [ -d "$HOME/go/bin" ]; then
-  export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 fi
 
 # Dotfiles exports
 if [ -f "$HOME/.dotfiles/zsh/.bash_exports" ]; then
-  . "$HOME/.dotfiles/zsh/.bash_exports"
+. "$HOME/.dotfiles/zsh/.bash_exports"
 fi
 
 # --- Shell utilities ---
 
 # Play sound on command failure
 play_on_error() {
-  local EXIT_CODE=$?
-  if [ $EXIT_CODE -ne 0 ]; then
+local EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
     (afplay ~/Downloads/ooof.m4a > /dev/null 2>&1 &)
-  fi
-  return $EXIT_CODE
+fi
+return $EXIT_CODE
 }
 precmd_functions+=(play_on_error)
 
 listening() {
-  if [ $# -eq 0 ]; then
+if [ $# -eq 0 ]; then
     sudo lsof -iTCP -sTCP:LISTEN -n -P
-  elif [ $# -eq 1 ]; then
+elif [ $# -eq 1 ]; then
     sudo lsof -iTCP -sTCP:LISTEN -n -P | grep -i --color "$1"
-  else
+else
     echo "Usage: listening [pattern]"
-  fi
+fi
 }
 
 killpid() {
-  if [ $# -eq 1 ]; then
+if [ $# -eq 1 ]; then
     kill -9 "$1"
-  else
+else
     kill
-  fi
+fi
 }
 
 # --- Aliases ---
@@ -119,11 +115,15 @@ source "$HOME/.dotfiles/zsh/claude-completion.zsh"
 source "$HOME/.dotfiles/zsh/gt-completion.zsh"
 
 # --- Greeting ---
-if command -v fortune >/dev/null 2>&1 && command -v cowsay >/dev/null 2>&1 && [ -z "$GREETING_SHOWN" ]; then
-  fortune -n 320 -s | cowsay -f small
-  export GREETING_SHOWN=1
+if command -v fortune >/dev/null 2>&1 && command -v cowsay >/dev/null 2>&1 && [ -z "$GREETING_SHOWN" ];
+then
+fortune -n 320 -s | cowsay -f small
+export GREETING_SHOWN=1
 fi
 
-
-# --- Syntax highlighting (must be near end) ---
+# --- Autosuggestions and syntax highlighting (must be near end) ---
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# --- Starship (must be LAST) ---
+eval "$(starship init zsh)"
