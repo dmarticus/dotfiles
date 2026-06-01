@@ -1,0 +1,37 @@
+{
+  "cli_default_open_behavior": "existing_window",
+  "outline_panel": {
+    "dock": "left",
+  },
+  "collaboration_panel": {
+    "dock": "left",
+  },
+  "project_panel": {
+    "dock": "right",
+  },
+  "agent": {
+    "tool_permissions": {
+      "default": "allow",
+    },
+    "model_parameters": [],
+    "default_model": {
+      "effort": "high",
+      "enable_thinking": true,
+      "provider": "zed.dev",
+      "model": "claude-opus-4-7",
+    },
+    "dock": "left",
+  },
+  "git_panel": {
+    "dock": "bottom",
+  },
+  "base_keymap": "SublimeText",
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "buffer_font_family": "Berkeley Mono",
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Gruvbox Dark Hard",
+  },
+}

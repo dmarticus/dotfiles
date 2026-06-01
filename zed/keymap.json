@@ -1,0 +1,63 @@
+[
+  {
+    "context": "Workspace",
+    "use_key_equivalents": true,
+    "bindings": {
+      "shift shift": "file_finder::Toggle",
+      "cmd-b": "workspace::ToggleRightDock",
+      "cmd-t": "file_finder::Toggle",
+      "cmd-1": "project_panel::ToggleFocus",
+      "cmd-2": "terminal_panel::Toggle",
+      "cmd-3": "git_panel::ToggleFocus",
+      "cmd-4": "debug_panel::ToggleFocus",
+      "ctrl-cmd-1": "pane::SplitLeft",
+      "ctrl-cmd-2": "pane::SplitRight",
+      "ctrl-cmd-3": "pane::SplitDown",
+      "ctrl-cmd-4": "pane::SplitUp",
+      "cmd-i": "workspace::ToggleLeftDock",
+    },
+  },
+  {
+    "context": "Editor",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-`": "workspace::ToggleBottomDock",
+      "cmd-g": ["editor::SelectNext", { "replace_newest": false }],
+      "ctrl-cmd-g": "editor::SelectAllMatches",
+      "cmd-d": null,
+      "cmd-i": "workspace::ToggleLeftDock",
+      "cmd-2": "terminal_panel::Toggle",
+      "cmd-3": "git_panel::ToggleFocus",
+      "cmd-4": "debug_panel::ToggleFocus",
+    },
+  },
+  {
+    "context": "AgentPanel",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-i": "workspace::ToggleLeftDock",
+      "cmd-2": "terminal_panel::Toggle",
+      "cmd-3": "git_panel::ToggleFocus",
+      "cmd-4": "debug_panel::ToggleFocus",
+    },
+  },
+  {
+    "context": "MessageEditor",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-i": "workspace::ToggleLeftDock",
+      "cmd-2": "terminal_panel::Toggle",
+      "cmd-3": "git_panel::ToggleFocus",
+      "cmd-4": "debug_panel::ToggleFocus",
+    },
+  },
+  {
+    "context": "Terminal",
+    "use_key_equivalents": true,
+    "bindings": {
+      "cmd-2": "terminal_panel::Toggle",
+      "cmd-3": "git_panel::ToggleFocus",
+      "cmd-4": "debug_panel::ToggleFocus",
+    },
+  },
+]
