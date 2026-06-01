@@ -47,6 +47,7 @@ EOF
 }
 
 install 1password yes
+install alt-tab yes
 install atuin
 install bat
 install bottom
@@ -56,6 +57,7 @@ install claude-code yes
 install cmake
 install composer
 install cowsay
+install defaultbrowser
 install direnv
 install dotenvx/brew/dotenvx
 install dust
@@ -68,13 +70,16 @@ install gh
 install git-delta
 install git-extras
 install go
+install google-chrome yes
 install google-drive yes
 install gum
 install helm
+install hiddenbar yes
 install iterm2 yes
 install jq
 install k6
 install k9s
+install karabiner-elements yes
 install kubectx
 install lazygit
 install markdownlint-cli2
@@ -87,7 +92,9 @@ install oha
 install openssl
 install procs
 install pulumi/tap/pulumi
+install raycast yes
 install readline
+install rectangle yes
 install ripgrep
 install ruff
 install secretive yes
@@ -95,8 +102,10 @@ install slack yes
 install spotify yes
 install sqlite3
 install starship
+install stats yes
 install swiftformat
 install swiftlint
+install tailscale yes
 install uv
 install wget
 install xz
