@@ -64,6 +64,7 @@ install dust
 install elixir
 install eza
 install fd
+install flox yes
 install fortune
 install fzf
 install gh
@@ -74,7 +75,6 @@ install google-chrome yes
 install google-drive yes
 install gum
 install helm
-install hiddenbar yes
 install iterm2 yes
 install jq
 install k6
@@ -90,6 +90,7 @@ install neovim
 install ngrok yes
 install oha
 install openssl
+install orbstack yes
 install procs
 install pulumi/tap/pulumi
 install raycast yes
