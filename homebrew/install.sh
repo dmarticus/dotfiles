@@ -65,6 +65,7 @@ install elixir
 install eza
 install fd
 install flox yes
+install font-symbols-only-nerd-font yes
 install fortune
 install fzf
 install gh
