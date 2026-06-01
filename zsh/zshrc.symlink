@@ -23,14 +23,8 @@ export LDFLAGS="-L/opt/homebrew/opt/openssl/lib"
 
 # --- Language/tool managers ---
 
-# rbenv
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)"
-
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+# mise (manages Python, Node, Ruby, Go, Rust, etc.)
+eval "$(mise activate zsh)"
 
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
@@ -39,11 +33,6 @@ case ":$PATH:" in
 *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
 # SDKMAN (must be near end for it to work)
 export SDKMAN_DIR="$HOME/.sdkman"
 [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ] && source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -51,13 +40,11 @@ export SDKMAN_DIR="$HOME/.sdkman"
 # direnv
 eval "$(direnv hook zsh)"
 
-# Atuin
-. "$HOME/.atuin/bin/env"
+# Atuin (brew install — binary on PATH; no extra env script needed)
 eval "$(atuin init zsh)"
 
 # --- PATH additions ---
 
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 export PATH="$PATH:$HOME/.local/bin"
 
 # Go
