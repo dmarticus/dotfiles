@@ -52,5 +52,8 @@
 	editor = zed --wait
 [init]
 	defaultBranch = main
+[gpg]
+	format = ssh
 [gpg "ssh"]
 	program = /usr/bin/ssh-keygen
+	allowedSignersFile = ~/.dotfiles/git/allowed_signers
