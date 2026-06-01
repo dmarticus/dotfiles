@@ -16,3 +16,11 @@ fi
 if [ -d "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
+
+# Secretive SSH agent — needed by ssh-keygen (git signing) and any tool that
+# doesn't read ~/.ssh/config's IdentityAgent setting.
+SECRETIVE_SOCK="$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh"
+if [ -S "$SECRETIVE_SOCK" ]; then
+  export SSH_AUTH_SOCK="$SECRETIVE_SOCK"
+fi
+unset SECRETIVE_SOCK
