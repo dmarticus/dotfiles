@@ -1,0 +1,13 @@
+# Starship config — see https://starship.rs/config/
+
+# Default 500ms is shorter than node's startup on Apple Silicon.
+command_timeout = 1500
+
+# Drop the npm package version (renders v0.0.0 in monorepos).
+[package]
+disabled = true
+
+# Drop the docker/orbstack indicator. If you're shelled into a remote
+# context, the cwd already makes that obvious.
+[docker_context]
+disabled = true
