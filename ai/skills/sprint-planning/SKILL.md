@@ -233,7 +233,7 @@ Wait for the user's response.
 
 ### Step 10: Generate the Update
 
-Compose the final sprint update using all gathered and confirmed data. Write a short narrative summary paragraph for the retro that captures the team's key themes and accomplishments.
+Compose the final sprint update using all gathered and confirmed data. Write a short narrative summary paragraph for the retro that captures the team's key themes and accomplishments. Run the `highsignal` skill's quick-edit pass over the narrative prose (rewrite mode): no throat-clears, no business-speak, no em-dash runs — plain sentences that read like a teammate wrote them. Apply the fixes silently; leave the structured sections (lists, links, headers) untouched.
 
 **IMPORTANT**: Output the update as raw markdown inside a code block so the user can copy/paste it directly into GitHub.
 

@@ -73,6 +73,8 @@ The planner writes a plan file per its own contract.
 
 ### Step 3: Implement
 
+Before writing code, state the done-condition as a **binary check** — something a human or script could evaluate with no judgment call ("all N endpoints return the new field and `pytest tests/api` passes", not "the API is improved"). Derive it from the plan file when one exists. If no clean binary check can be stated, the task is too big or too fuzzy: tell the user and propose a decomposition before continuing. Keep the check in mind through the run — Step 9 reports against it.
+
 Implement the change in the current context. Follow the plan file if one exists, otherwise work directly from `TASK`. This step is conversational — check in with the user on judgment calls.
 
 **Preserve context aggressively.** The review loops in Steps 6–8 run in fresh subprocesses, but Step 3 stays in main context through the rest of the run. Every file read and search compounds. Push expensive reads into subagents that return summaries instead of raw content:
@@ -149,6 +151,7 @@ Rerun the Claude review loop once more to catch anything Copilot's fixes introdu
 
 Tell the user what happened:
 
+- The done-check from Step 3 and whether it passes — run the check, don't assert it. If it fails or can't be evaluated, say so plainly; don't soften it.
 - Commits added during the run (`git log @{u}..HEAD --oneline` or the range since the initial commit from Step 4)
 - The PR URL (`gh pr view --json url -q .url`)
 - Any outstanding findings — check `.notes/review-skipped.md` for Claude's deferred items and the Copilot state file under `~/.local/state/copilot-review-loop/` for low-confidence Copilot items flagged for human review.

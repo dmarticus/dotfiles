@@ -105,6 +105,8 @@ Conventions:
 
 If a `Done` item maps cleanly to a morning `Slack` ping or `Review requests` entry, mention that connection in the bullet (e.g. "replied to Leonhard re: Voy call → booked for Friday"). The point is to close the loop.
 
+Before showing the draft, run the `highsignal` skill's quick-edit pass over it (rewrite mode, all four lenses): cut throat-clears, value-teasers, em-dash overuse, and filler so the post reads like Dylan wrote it, not a model. Apply the fixes silently; don't list findings.
+
 ### Step 5: Confirm before posting
 
 Show the draft inline. Ask the user:
